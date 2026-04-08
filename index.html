@@ -40,86 +40,86 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);tra
 .app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;overflow:hidden;}
 
 /* HEADER */
-.header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;}
-.hlogo{display:flex;align-items:center;gap:8px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 16px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;}
+.hlogo{display:flex;align-items:center;gap:10px;}
 .hlogo svg{color:var(--accent);}
-.logo-txt{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:-.5px;}
-.ibtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;}
+.logo-txt{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.5px;}
+.ibtn{width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;}
 .ibtn:hover{background:var(--bg4);color:var(--text);}
 
 /* TOOLBAR */
-.toolbar{display:flex;align-items:center;justify-content:space-between;padding:9px 18px 7px;flex-shrink:0;gap:10px;}
-.q-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
-.q-lbl{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.6px;text-transform:uppercase;}
-.q-time{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--accent);background:var(--glow);padding:3px 10px;border-radius:20px;}
-.q-cnt{font-size:11px;color:var(--text3);}
+.toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 22px 10px;flex-shrink:0;gap:10px;}
+.q-meta{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.q-lbl{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.6px;text-transform:uppercase;}
+.q-time{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--accent);background:var(--glow);padding:4px 12px;border-radius:20px;}
+.q-cnt{font-size:13px;color:var(--text3);}
 .sort-wrap{position:relative;}
-.sort-ibtn{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;}
+.sort-ibtn{width:42px;height:42px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;}
 .sort-ibtn.on{border-color:var(--accent);color:var(--accent);background:var(--glow);}
-.sdrop{position:absolute;top:calc(100% + 6px);right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);z-index:200;min-width:162px;display:none;}
+.sdrop{position:absolute;top:calc(100% + 8px);right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);z-index:200;min-width:180px;display:none;}
 .sdrop.open{display:block;animation:fdwn .15s ease;}
-@keyframes fdwn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
-.sopt{display:flex;align-items:center;gap:10px;padding:11px 14px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border);}
+@keyframes fdwn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.sopt{display:flex;align-items:center;gap:12px;padding:14px 18px;font-size:15px;font-weight:500;color:var(--text2);cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border);}
 .sopt:last-child{border:none;}
 .sopt:hover{background:var(--bg3);color:var(--text);}
 .sopt.on{color:var(--accent);}
 .schk{margin-left:auto;color:var(--accent);}
 
 /* CONTENT */
-.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 18px 110px;}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 22px 130px;}
 .content::-webkit-scrollbar{width:3px;}
 .content::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:10px;}
 
 /* ACTIVE TIMER */
-.atcard{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:18px;box-shadow:var(--shadow);margin-bottom:14px;position:relative;overflow:hidden;}
-.atcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
-.at-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:13px;}
+.atcard{background:var(--card);border:1px solid var(--border2);border-radius:24px;padding:22px;box-shadow:var(--shadow);margin-bottom:18px;position:relative;overflow:hidden;}
+.atcard::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.at-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
 .at-info{flex:1;min-width:0;}
-.at-prio-row{display:flex;align-items:center;gap:5px;margin-bottom:3px;}
-.pdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.plbl{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;}
-.at-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;line-height:1.25;word-break:break-word;padding-right:8px;}
-.ring-wrap{position:relative;width:68px;height:68px;flex-shrink:0;}
-.rsvg{width:68px;height:68px;transform:rotate(-90deg);}
-.rbg{fill:none;stroke:var(--bg4);stroke-width:5;}
-.rfg{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s;}
-.rtime{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;}
-.at-ctrls{display:flex;gap:7px;margin-top:12px;}
-.cbtn{flex:1;height:38px;border-radius:11px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;}
+.at-prio-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.pdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.plbl{font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;}
+.at-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;line-height:1.25;word-break:break-word;padding-right:10px;}
+.ring-wrap{position:relative;width:86px;height:86px;flex-shrink:0;}
+.rsvg{width:86px;height:86px;transform:rotate(-90deg);}
+.rbg{fill:none;stroke:var(--bg4);stroke-width:6;}
+.rfg{fill:none;stroke:var(--accent);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s;}
+.rtime{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.at-ctrls{display:flex;gap:8px;margin-top:16px;}
+.cbtn{flex:1;height:48px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;}
 .cbtn:active{transform:scale(.93);}
 .cbtn.pause{color:var(--yellow);border-color:var(--yellow);background:var(--ybg);}
 .cbtn.done{color:var(--green);border-color:var(--green);background:var(--gbg);}
 .cbtn.skip{color:var(--blue);border-color:var(--blue);background:var(--bbg);}
 .cbtn.reset{color:var(--purple);border-color:var(--purple);background:var(--pbg);}
 .cbtn.del{color:var(--red);border-color:var(--red);background:var(--rbg);}
-.chips{display:flex;gap:5px;margin-top:9px;flex-wrap:wrap;}
-.chip{padding:4px 10px;border-radius:20px;border:1px dashed var(--border2);background:transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif;}
+.chips{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.chip{padding:6px 14px;border-radius:24px;border:1px dashed var(--border2);background:transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif;}
 .chip:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
 
 /* SECTION HDR */
-.shdr{display:flex;align-items:center;gap:8px;padding:6px 0 8px;color:var(--text3);font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;}
+.shdr{display:flex;align-items:center;gap:10px;padding:10px 0 12px;color:var(--text3);font-size:13px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;}
 .sline{flex:1;height:1px;background:var(--border);}
 
 /* TASK ITEM */
-.ti{background:var(--card);border:1px solid var(--border);border-radius:15px;margin-bottom:9px;padding:13px 12px 13px 14px;display:flex;align-items:center;gap:10px;transition:all .2s;user-select:none;}
+.ti{background:var(--card);border:1px solid var(--border);border-radius:18px;margin-bottom:12px;padding:16px 14px 16px 18px;display:flex;align-items:center;gap:12px;transition:all .2s;user-select:none;}
 .ti.dragging{opacity:.35;transform:scale(.97);}
 .ti.drag-over{border-color:var(--accent);background:var(--card2);transform:scale(1.01);}
-.ti.p-critical{border-left:3px solid var(--red);}
-.ti.p-high{border-left:3px solid var(--yellow);}
-.ti.p-medium{border-left:3px solid var(--blue);}
-.ti.p-low{border-left:3px solid var(--text3);}
-.dh{color:var(--text3);cursor:grab;flex-shrink:0;touch-action:none;padding:2px;}
+.ti.p-critical{border-left:4px solid var(--red);}
+.ti.p-high{border-left:4px solid var(--yellow);}
+.ti.p-medium{border-left:4px solid var(--blue);}
+.ti.p-low{border-left:4px solid var(--text3);}
+.dh{color:var(--text3);cursor:grab;flex-shrink:0;touch-action:none;padding:4px;}
 .tinfo{flex:1;min-width:0;}
-.tname{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.tmeta{display:flex;align-items:center;gap:7px;margin-top:4px;}
-.ttime{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--text2);font-weight:500;}
-.pchip{font-size:10px;font-weight:700;letter-spacing:.4px;padding:2px 7px;border-radius:20px;text-transform:uppercase;}
+.tname{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tmeta{display:flex;align-items:center;gap:8px;margin-top:6px;}
+.ttime{display:flex;align-items:center;gap:4px;font-size:13px;color:var(--text2);font-weight:500;}
+.pchip{font-size:11px;font-weight:700;letter-spacing:.4px;padding:4px 10px;border-radius:20px;text-transform:uppercase;}
 .pc-critical{background:var(--rbg);color:var(--red);}
 .pc-high{background:var(--ybg);color:var(--yellow);}
 .pc-medium{background:var(--bbg);color:var(--blue);}
 .pc-low{background:var(--bg4);color:var(--text3);}
-.tbtns{display:flex;gap:3px;flex-shrink:0;}
-.tbtn{width:29px;height:29px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;}
+.tbtns{display:flex;gap:5px;flex-shrink:0;}
+.tbtn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;}
 .tbtn:active{transform:scale(.88);}
 .tbtn:hover{background:var(--bg3);color:var(--text);}
 .tbtn.start{color:var(--accent);border-color:var(--accent);background:var(--glow);}
@@ -127,37 +127,37 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);tra
 .tbtn.rd{color:var(--red);}
 
 /* FOLDER ITEMS */
-.fi{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;padding:12px 13px;display:flex;align-items:center;gap:10px;opacity:.8;}
+.fi{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:10px;padding:16px 18px;display:flex;align-items:center;gap:12px;opacity:.8;}
 .fi-info{flex:1;min-width:0;}
-.fi-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.fi-meta{font-size:11px;color:var(--text3);margin-top:2px;}
-.fi-btns{display:flex;gap:4px;flex-shrink:0;}
-.rbtn{width:28px;height:28px;border-radius:8px;border:1px solid var(--green);background:var(--gbg);color:var(--green);cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.pbtn{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.fi-name{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fi-meta{font-size:13px;color:var(--text3);margin-top:4px;}
+.fi-btns{display:flex;gap:6px;flex-shrink:0;}
+.rbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--green);background:var(--gbg);color:var(--green);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.pbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;}
 
 /* EMPTY */
-.empty{text-align:center;padding:52px 20px;color:var(--text3);}
-.empty svg{margin-bottom:14px;opacity:.35;}
-.empty p{font-size:14px;line-height:1.6;}
+.empty{text-align:center;padding:60px 20px;color:var(--text3);}
+.empty svg{margin-bottom:18px;opacity:.35;}
+.empty p{font-size:16px;line-height:1.6;}
 
 /* FAB */
-.fab{position:fixed;bottom:26px;right:calc(50% - 222px);width:54px;height:54px;border-radius:17px;background:var(--accent);border:none;color:#fff;box-shadow:0 8px 24px var(--glow),0 3px 10px rgba(0,0,0,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:200;}
+.fab{position:fixed;bottom:32px;right:calc(50% - 222px);width:64px;height:64px;border-radius:20px;background:var(--accent);border:none;color:#fff;box-shadow:0 8px 24px var(--glow),0 3px 10px rgba(0,0,0,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:200;}
 .fab:active{transform:scale(.92);}
-@media(max-width:480px){.fab{right:18px;}}
+@media(max-width:480px){.fab{right:22px;}}
 
 /* DRAWER */
-.dscrim{position:fixed;inset:0;background:var(--scrim);z-index:400;display:none;backdrop-filter:blur(3px);}
+.dscrim{position:fixed;inset:0;background:var(--scrim);z-index:400;display:none;backdrop-filter:blur(4px);}
 .dscrim.open{display:block;}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:282px;background:var(--drawer);border-left:1px solid var(--border2);z-index:401;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:var(--shadow);}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:320px;background:var(--drawer);border-left:1px solid var(--border2);z-index:401;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:var(--shadow);}
 .drawer.open{transform:translateX(0);}
-.dh2{display:flex;align-items:center;justify-content:space-between;padding:18px 16px 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
-.dtitle{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;}
-.dclose{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.dbody{flex:1;overflow-y:auto;padding:8px 8px 0;}
-.dseclbl{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.7px;text-transform:uppercase;padding:10px 8px 5px;}
-.ditem{display:flex;align-items:center;gap:11px;padding:11px 10px;border-radius:12px;cursor:pointer;transition:background .18s;border:none;background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;width:100%;text-align:left;}
+.dh2{display:flex;align-items:center;justify-content:space-between;padding:22px 20px 18px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.dtitle{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;}
+.dclose{width:40px;height:40px;border-radius:11px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.dbody{flex:1;overflow-y:auto;padding:12px 12px 0;}
+.dseclbl{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.7px;text-transform:uppercase;padding:14px 12px 8px;}
+.ditem{display:flex;align-items:center;gap:14px;padding:14px 12px;border-radius:14px;cursor:pointer;transition:background .18s;border:none;background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;font-weight:500;width:100%;text-align:left;}
 .ditem:hover{background:var(--bg4);}
-.dicon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.dicon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .di-g{background:var(--gbg);color:var(--green);}
 .di-r{background:var(--rbg);color:var(--red);}
 .di-p{background:var(--pbg);color:var(--purple);}
@@ -165,46 +165,46 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);tra
 .di-b{background:var(--bbg);color:var(--blue);}
 .di-y{background:var(--ybg);color:var(--yellow);}
 .dlbl{flex:1;}
-.dbadge{font-size:11px;font-weight:700;background:var(--bg4);color:var(--text2);border-radius:20px;padding:1px 8px;}
-.ddivider{height:1px;background:var(--border);margin:5px 8px;}
-.toggle-row{display:flex;align-items:center;gap:11px;padding:11px 10px;border-radius:12px;}
-.track{width:42px;height:24px;border-radius:12px;background:var(--bg4);border:1px solid var(--border2);position:relative;cursor:pointer;transition:background .3s;flex-shrink:0;}
+.dbadge{font-size:13px;font-weight:700;background:var(--bg4);color:var(--text2);border-radius:20px;padding:2px 10px;}
+.ddivider{height:1px;background:var(--border);margin:8px 12px;}
+.toggle-row{display:flex;align-items:center;gap:14px;padding:14px 12px;border-radius:14px;}
+.track{width:50px;height:28px;border-radius:14px;background:var(--bg4);border:1px solid var(--border2);position:relative;cursor:pointer;transition:background .3s;flex-shrink:0;}
 .track.on{background:var(--accent);}
-.thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 1px 4px rgba(0,0,0,.3);}
-.track.on .thumb{transform:translateX(18px);}
+.thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 1px 4px rgba(0,0,0,.3);}
+.track.on .thumb{transform:translateX(24px);}
 
 /* MODALS */
-.mscrim{position:fixed;inset:0;background:var(--scrim);z-index:500;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
+.mscrim{position:fixed;inset:0;background:var(--scrim);z-index:500;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(5px);}
 .mscrim.open{display:flex;}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:24px 24px 0 0;padding:24px 20px 38px;width:100%;max-width:480px;box-shadow:var(--shadow);animation:sup .28s cubic-bezier(.34,1.56,.64,1);}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:28px 28px 0 0;padding:28px 24px 44px;width:100%;max-width:480px;box-shadow:var(--shadow);animation:sup .28s cubic-bezier(.34,1.56,.64,1);}
 @keyframes sup{from{transform:translateY(100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
-.mpill{width:34px;height:4px;background:var(--border2);border-radius:4px;margin:0 auto 18px;}
-.mtitle{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;margin-bottom:17px;}
-.fg{margin-bottom:14px;}
-.flbl{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;display:block;}
-.finput{width:100%;padding:11px 13px;border-radius:11px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
+.mpill{width:40px;height:5px;background:var(--border2);border-radius:5px;margin:0 auto 22px;}
+.mtitle{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:20px;}
+.fg{margin-bottom:18px;}
+.flbl{font-size:13px;font-weight:700;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;display:block;}
+.finput{width:100%;padding:14px 16px;border-radius:14px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;outline:none;transition:border-color .2s;}
 .finput:focus{border-color:var(--accent);}
-.trow{display:flex;gap:8px;align-items:center;}
+.trow{display:flex;gap:10px;align-items:center;}
 .trow .finput{text-align:center;}
-.tsep{color:var(--text2);font-weight:700;font-size:16px;line-height:42px;flex-shrink:0;}
-.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
-.popt{padding:9px 4px;border-radius:11px;border:2px solid var(--border);background:var(--bg3);color:var(--text2);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;cursor:pointer;transition:all .18s;text-align:center;}
+.tsep{color:var(--text2);font-weight:700;font-size:18px;line-height:42px;flex-shrink:0;}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.popt{padding:12px 6px;border-radius:12px;border:2px solid var(--border);background:var(--bg3);color:var(--text2);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;cursor:pointer;transition:all .18s;text-align:center;}
 .popt.sc{border-color:var(--red);color:var(--red);background:var(--rbg);}
 .popt.sh{border-color:var(--yellow);color:var(--yellow);background:var(--ybg);}
 .popt.sm{border-color:var(--blue);color:var(--blue);background:var(--bbg);}
 .popt.sl{border-color:var(--text3);color:var(--text3);background:var(--bg4);}
-.mactions{display:flex;gap:9px;margin-top:17px;}
-.bcancel{flex:1;padding:13px;border-radius:13px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
-.bsave{flex:2;padding:13px;border-radius:13px;border:none;background:var(--accent);color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px var(--glow);}
-.tlist{max-height:230px;overflow-y:auto;}
-.titem{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);margin-bottom:7px;cursor:pointer;transition:all .2s;}
+.mactions{display:flex;gap:12px;margin-top:24px;}
+.bcancel{flex:1;padding:16px;border-radius:16px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;}
+.bsave{flex:2;padding:16px;border-radius:16px;border:none;background:var(--accent);color:#fff;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px var(--glow);}
+.tlist{max-height:280px;overflow-y:auto;}
+.titem{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:1px solid var(--border);background:var(--bg3);margin-bottom:8px;cursor:pointer;transition:all .2s;}
 .titem:hover{border-color:var(--purple);}
-.tiname{font-size:13px;font-weight:600;}
-.ticnt{font-size:11px;color:var(--text3);margin-top:1px;}
-.tidel{background:none;border:none;color:var(--red);cursor:pointer;padding:4px;border-radius:6px;}
+.tiname{font-size:15px;font-weight:600;}
+.ticnt{font-size:13px;color:var(--text3);margin-top:2px;}
+.tidel{background:none;border:none;color:var(--red);cursor:pointer;padding:6px;border-radius:8px;}
 
 /* TOAST */
-.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:9px 18px;border-radius:30px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .28s;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow2);}
+.toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:12px 22px;border-radius:30px;font-size:15px;font-weight:500;z-index:999;opacity:0;transition:all .28s;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow2);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 </head>
@@ -212,11 +212,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);tra
 <div class="app">
   <header class="header">
     <div class="hlogo">
-      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+      <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
       <span class="logo-txt">FocusFlow</span>
     </div>
     <button class="ibtn" id="hamBtn">
-      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
   </header>
 
@@ -228,19 +228,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);tra
     </div>
     <div class="sort-wrap">
       <button class="sort-ibtn" id="sortBtn">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
       </button>
       <div class="sdrop" id="sdrop">
         <div class="sopt" data-s="none">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
           No Sort
         </div>
         <div class="sopt" data-s="time">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
           By Duration
         </div>
         <div class="sopt" data-s="priority">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M3 12h12M3 18h6"/></svg>
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M3 12h12M3 18h6"/></svg>
           By Priority
         </div>
       </div>
@@ -255,28 +255,28 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);tra
           <div class="at-name" id="atname"></div>
         </div>
         <div class="ring-wrap">
-          <svg class="rsvg" viewBox="0 0 68 68">
-            <circle class="rbg" cx="34" cy="34" r="28"/>
-            <circle class="rfg" id="ring" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="0"/>
+          <svg class="rsvg" viewBox="0 0 86 86">
+            <circle class="rbg" cx="43" cy="43" r="36"/>
+            <circle class="rfg" id="ring" cx="43" cy="43" r="36" stroke-dasharray="226.2" stroke-dashoffset="0"/>
           </svg>
           <div class="rtime" id="rtime">0:00</div>
         </div>
       </div>
       <div class="at-ctrls">
         <button class="cbtn pause" id="pauseBtn" onclick="pauseResume()">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" id="pauseIco"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" id="pauseIco"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
         </button>
         <button class="cbtn done" onclick="completeActive()">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
         </button>
         <button class="cbtn skip" onclick="skipActive()">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
         </button>
         <button class="cbtn reset" onclick="resetActive()">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.58"/></svg>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.58"/></svg>
         </button>
         <button class="cbtn del" onclick="deleteActive()">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         </button>
       </div>
       <div class="chips">
@@ -293,7 +293,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);tra
 </div>
 
 <button class="fab" id="fab">
-  <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </button>
 <div class="toast" id="toast"></div>
 
@@ -303,44 +303,44 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);tra
   <div class="dh2">
     <span class="dtitle">Menu</span>
     <button class="dclose" id="dclose">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
   <div class="dbody">
     <div class="dseclbl">Appearance</div>
     <div class="toggle-row">
-      <div class="dicon di-y"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" id="thico"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
-      <span style="font-size:14px;font-weight:500;flex:1;" id="thlbl">Dark Mode</span>
+      <div class="dicon di-y"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" id="thico"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+      <span style="font-size:16px;font-weight:500;flex:1;" id="thlbl">Dark Mode</span>
       <div class="track on" id="thtrack"><div class="thumb"></div></div>
     </div>
     <div class="ddivider"></div>
     <div class="dseclbl">Navigate</div>
     <button class="ditem" onclick="openFolder('completed')">
-      <div class="dicon di-g"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="dicon di-g"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
       <span class="dlbl">Completed</span>
       <span class="dbadge" id="dbComp">0</span>
     </button>
     <button class="ditem" onclick="openFolder('deleted')">
-      <div class="dicon di-r"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
+      <div class="dicon di-r"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
       <span class="dlbl">Bin</span>
       <span class="dbadge" id="dbDel">0</span>
     </button>
     <div class="ddivider"></div>
     <div class="dseclbl">Templates</div>
     <button class="ditem" onclick="openTmplLib()">
-      <div class="dicon di-p"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+      <div class="dicon di-p"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
       <span class="dlbl">Template Library</span>
       <span class="dbadge" id="dbTmpl">0</span>
     </button>
     <button class="ditem" onclick="openSaveTmpl()">
-      <div class="dicon di-o"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></div>
+      <div class="dicon di-o"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></div>
       <span class="dlbl">Save Queue as Template</span>
     </button>
     <div class="ddivider"></div>
     <div class="dseclbl">Settings</div>
     <div class="toggle-row">
-      <div class="dicon di-b"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></div>
-      <span style="font-size:14px;font-weight:500;flex:1;">Sound Effects</span>
+      <div class="dicon di-b"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></div>
+      <span style="font-size:16px;font-weight:500;flex:1;">Sound Effects</span>
       <div class="track on" id="sndtrack"><div class="thumb"></div></div>
     </div>
   </div>
@@ -350,10 +350,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);tra
 <div class="mscrim" id="folderM">
   <div class="modal" style="max-height:80vh;display:flex;flex-direction:column;">
     <div class="mpill"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
       <div class="mtitle" id="folderT" style="margin-bottom:0;"></div>
-      <button onclick="closeFolder()" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:4px;">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <button onclick="closeFolder()" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:6px;">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <div id="folderC" style="overflow-y:auto;flex:1;"></div>
@@ -509,7 +509,7 @@ function updateSortUI(){
   document.querySelectorAll('.sopt').forEach(o=>{
     const a=o.dataset.s===(sortMode||'none');o.classList.toggle('on',a);
     let ch=o.querySelector('.schk');
-    if(a&&!ch){ch=document.createElement('span');ch.className='schk';ch.innerHTML='<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';o.appendChild(ch);}
+    if(a&&!ch){ch=document.createElement('span');ch.className='schk';ch.innerHTML='<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';o.appendChild(ch);}
     else if(!a&&ch)ch.remove();
   });
 }
@@ -541,7 +541,7 @@ function renderTasks(){
   const q=sorted().filter(t=>t.id!==activeId);
   hdr.style.display=q.length?'flex':'none';
   if(!tasks.length&&!activeId){
-    el.innerHTML=`<div class="empty"><svg width="52" height="52" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><p>No tasks yet.<br>Tap <strong>+</strong> to get started.</p></div>`;
+    el.innerHTML=`<div class="empty"><svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><p>No tasks yet.<br>Tap <strong>+</strong> to get started.</p></div>`;
     return;
   }
   el.innerHTML='';
@@ -549,14 +549,14 @@ function renderTasks(){
     const ri=tasks.findIndex(t=>t.id===task.id);
     const d=document.createElement('div');
     d.className=`ti p-${task.priority}`;d.draggable=!sortMode;d.dataset.id=task.id;d.dataset.idx=ri;
-    d.innerHTML=`<div class="dh"><svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><circle cx="9" cy="5" r="1.3"/><circle cx="15" cy="5" r="1.3"/><circle cx="9" cy="12" r="1.3"/><circle cx="15" cy="12" r="1.3"/><circle cx="9" cy="19" r="1.3"/><circle cx="15" cy="19" r="1.3"/></svg></div>
+    d.innerHTML=`<div class="dh"><svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><circle cx="9" cy="5" r="1.3"/><circle cx="15" cy="5" r="1.3"/><circle cx="9" cy="12" r="1.3"/><circle cx="15" cy="12" r="1.3"/><circle cx="9" cy="19" r="1.3"/><circle cx="15" cy="19" r="1.3"/></svg></div>
     <div class="tinfo"><div class="tname">${esc(task.name)}</div>
-    <div class="tmeta"><span class="ttime"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>${fmt(task.mins*60+task.secs)}</span><span class="pchip pc-${task.priority}">${task.priority}</span></div></div>
+    <div class="tmeta"><span class="ttime"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>${fmt(task.mins*60+task.secs)}</span><span class="pchip pc-${task.priority}">${task.priority}</span></div></div>
     <div class="tbtns">
-      <button class="tbtn start" onclick="startTask('${task.id}')"><svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
-      <button class="tbtn" onclick="openEditTask('${task.id}')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-      <button class="tbtn grn" onclick="completeTask('${task.id}')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
-      <button class="tbtn rd" onclick="deleteTask('${task.id}')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+      <button class="tbtn start" onclick="startTask('${task.id}')"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+      <button class="tbtn" onclick="openEditTask('${task.id}')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      <button class="tbtn grn" onclick="completeTask('${task.id}')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
+      <button class="tbtn rd" onclick="deleteTask('${task.id}')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
     </div>`;
     d.addEventListener('dragstart',onDS);d.addEventListener('dragover',onDO);d.addEventListener('drop',onDrop);d.addEventListener('dragend',onDE);
     d.querySelector('.dh').addEventListener('touchstart',onTS,{passive:true});
@@ -569,7 +569,7 @@ function openFolder(type){curFolder=type;closeDrawer();document.getElementById('
 function closeFolder(){document.getElementById('folderM').classList.remove('open');curFolder=null;}
 function renderFolderC(){
   const el=document.getElementById('folderC'),list=curFolder==='completed'?completed:deleted;
-  if(!list.length){el.innerHTML=`<div class="empty" style="padding:28px 0;"><p>${curFolder==='completed'?'No completed tasks.':'Bin is empty.'}</p></div>`;return;}
+  if(!list.length){el.innerHTML=`<div class="empty" style="padding:32px 0;"><p>${curFolder==='completed'?'No completed tasks.':'Bin is empty.'}</p></div>`;return;}
   el.innerHTML='';
   list.forEach(t=>{
     const ts=curFolder==='completed'?t.completedAt:(t.deletedAt||t.completedAt||Date.now());
@@ -578,8 +578,8 @@ function renderFolderC(){
     let meta=curFolder==='completed'?`Completed ${ago} · auto-bins in ${Math.max(0,Math.floor(72-(Date.now()-t.completedAt)/3600000))}h`:`Deleted ${ago}`;
     d.innerHTML=`<div class="fi-info"><div class="fi-name">${esc(t.name)}</div><div class="fi-meta">${meta}</div></div>
     <div class="fi-btns">
-      <button class="rbtn" onclick="${curFolder==='completed'?`restoreComp('${t.id}')`:`restoreDel('${t.id}')`}"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.58"/></svg></button>
-      <button class="pbtn" onclick="${curFolder==='completed'?`compToBin('${t.id}')`:`permDel('${t.id}')`}">${curFolder==='completed'?'<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>':'<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'}</button>
+      <button class="rbtn" onclick="${curFolder==='completed'?`restoreComp('${t.id}')`:`restoreDel('${t.id}')`}"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.58"/></svg></button>
+      <button class="pbtn" onclick="${curFolder==='completed'?`compToBin('${t.id}')`:`permDel('${t.id}')`}">${curFolder==='completed'?'<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>':'<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'}</button>
     </div>`;
     el.appendChild(d);
   });
@@ -613,7 +613,7 @@ function tick(){
 function updRing(){
   document.getElementById('rtime').textContent=fmt(secsLeft);
   const p=totalSecs>0?secsLeft/totalSecs:0;
-  document.getElementById('ring').style.strokeDashoffset=175.9*(1-p);
+  document.getElementById('ring').style.strokeDashoffset=226.2*(1-p);
   if(secsLeft>0)document.getElementById('ring').style.stroke='var(--accent)';
 }
 function stopTimer(){clearInterval(ticker);ticker=null;activeId=null;paused=false;document.getElementById('atcard').style.display='none';}
@@ -669,11 +669,11 @@ function openTmplLib(){closeDrawer();renderTmplList();document.getElementById('t
 function closeTmplLib(){document.getElementById('tmplM').classList.remove('open');}
 function renderTmplList(){
   const el=document.getElementById('tmplList');
-  if(!templates.length){el.innerHTML='<p style="color:var(--text3);font-size:13px;text-align:center;padding:20px 0;">No templates yet.</p>';return;}
+  if(!templates.length){el.innerHTML='<p style="color:var(--text3);font-size:15px;text-align:center;padding:24px 0;">No templates yet.</p>';return;}
   el.innerHTML='';
   templates.forEach(tm=>{
     const d=document.createElement('div');d.className='titem';
-    d.innerHTML=`<div style="flex:1;"><div class="tiname">${esc(tm.name)}</div><div class="ticnt">${tm.tasks.length} task${tm.tasks.length!==1?'s':''}</div></div><button class="tidel" onclick="delTmpl('${tm.id}');event.stopPropagation();"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+    d.innerHTML=`<div style="flex:1;"><div class="tiname">${esc(tm.name)}</div><div class="ticnt">${tm.tasks.length} task${tm.tasks.length!==1?'s':''}</div></div><button class="tidel" onclick="delTmpl('${tm.id}');event.stopPropagation();"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
     d.onclick=()=>loadTmpl(tm.id);el.appendChild(d);
   });
 }

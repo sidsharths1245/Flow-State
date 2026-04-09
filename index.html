@@ -136,7 +136,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 
 /* Centered Task Info */
 .at-info-center{text-align:center;margin-bottom:48px;width:100%; display: flex; align-items: center; justify-content: center; gap: 10px;}
-.pdot{width:16px;height:16px;border-radius:50%;background:transparent !important;border:2px solid var(--accent);}
+.pdot{width:16px;height:16px;border-radius:50%;background:transparent !important;border:2px solid var(--accent);flex-shrink:0;}
 .at-name{font-size:22px;font-weight:600;color:var(--text);word-break:break-word;}
 
 /* Large Gradient Ring */
@@ -199,10 +199,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 .ti{background:var(--bg2);border-radius:16px;padding:16px 16px;display:flex;align-items:center;gap:12px;transition:all .2s;user-select:none;position:relative;z-index:1; touch-action: pan-y;}
 .ti.dragging{opacity:.35;transform:scale(.97);}
 .ti.drag-over{background:var(--bg4);transform:scale(1.01);}
-.ti.p-critical{border-left:4px solid var(--red);}
-.ti.p-high{border-left:4px solid var(--yellow);}
-.ti.p-medium{border-left:4px solid var(--green);}
-.ti.p-low{border-left:4px solid var(--blue);}
 
 .dh{color:var(--text3);cursor:grab;flex-shrink:0;touch-action:none;padding:2px;}
 .tinfo{flex:1;min-width:0;cursor:pointer;display:flex;flex-direction:column;gap:4px;}
@@ -822,8 +818,9 @@ function renderTasks(){
     w.innerHTML=`
       <div class="ti-bg ti-bg-left"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="ti-bg ti-bg-right"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
-      <div class="ti p-${task.priority}" data-id="${task.id}" data-idx="${ri}" draggable="${!sortMode}">
+      <div class="ti" data-id="${task.id}" data-idx="${ri}" draggable="${!sortMode}">
         <div class="dh"><svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><circle cx="9" cy="5" r="1.3"/><circle cx="15" cy="5" r="1.3"/><circle cx="9" cy="12" r="1.3"/><circle cx="15" cy="12" r="1.3"/><circle cx="9" cy="19" r="1.3"/><circle cx="15" cy="19" r="1.3"/></svg></div>
+        <div class="pdot" style="border-color: ${PC[task.priority]}"></div>
         <div class="tinfo" onclick="openEditTask('${task.id}')" title="Click to edit">
           <div class="tname">${esc(task.name)}</div>
           <div class="ttime">${fmt(task.mins*60+task.secs)}</div>

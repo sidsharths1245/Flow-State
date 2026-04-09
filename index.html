@@ -20,6 +20,7 @@
   --text2: #a1a1aa;
   --text3: #71717a;
   
+  /* Signature Purple */
   --accent: #8b5cf6;
   --accent2: #d8b4fe;
   --glow: rgba(139, 92, 246, 0.15);
@@ -105,7 +106,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 .at-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: var(--bg);
+  background: var(--bg); 
   z-index: 9999;
   display: none;
   align-items: center;
@@ -259,12 +260,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 .track.on .thumb{transform:translateX(22px);}
 
 /* KEYBOARD AWARE MODALS ALIGNED TO TOP */
-.mscrim{position:fixed;inset:0;background:var(--scrim);z-index:500;display:none;align-items:flex-start; /* Aligns to top instead of bottom */ justify-content:center;backdrop-filter:blur(8px);padding:20px;}
+.mscrim{position:fixed;inset:0;background:var(--scrim);z-index:500;display:none;align-items:flex-start; justify-content:center;backdrop-filter:blur(8px);padding:20px;}
 .mscrim.open{display:flex;}
 .modal {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 28px; /* Full rounded corners */
+  border-radius: 28px;
   padding: 24px 24px 32px;
   width: 100%;
   max-width: 480px;
@@ -275,10 +276,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-/* Slide in from top instead of bottom */
 @keyframes sdown{from{transform:translateY(-100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
 
-.mpill{display:none;} /* Removed drag pill since modals are now floating from top */
+.mpill{display:none;}
 .mtitle{font-size:20px;font-weight:700;margin-bottom:24px;}
 .fg{margin-bottom:20px;}
 .flbl{font-size:12px;font-weight:700;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;display:block;}
@@ -335,6 +335,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
       <span class="logo-txt">Flow State</span>
     </div>
     <div class="h-actions">
+      <button class="ibtn" id="clearAllBtn" title="Clear All Tasks" onclick="clearAllTasks()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      </button>
       <div class="sort-wrap">
         <button class="ibtn sort-ibtn" id="sortBtn" title="Sort Tasks">
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 16H21"/><path d="M11 12H17"/><path d="M11 8H13"/><path d="M3 17V7"/><path d="M6 14L3 17L0 14"/></svg>
@@ -432,9 +435,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
         
         <div class="ctrl-wrap">
           <button class="pbtn" id="pauseBtn" onclick="pauseResume()">
-            <svg id="pauseIco" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="pauseIco" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
           </button>
-          <span class="ctrl-lbl" id="pauseLbl">Start</span>
+          <span class="ctrl-lbl" id="pauseLbl">Pause</span>
         </div>
         
         <div class="ctrl-wrap">
@@ -520,9 +523,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
       <div class="mtitle" id="folderT" style="margin-bottom:0;"></div>
-      <button onclick="closeFolder()" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:6px;">
-        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button id="emptyBinBtn" onclick="emptyBin()" style="display:none; background:var(--rbg); color:var(--red); border:none; padding:8px 14px; border-radius:10px; font-family:'Inter',sans-serif; font-weight:600; font-size:13px; cursor:pointer; transition:all .2s;">Empty Bin</button>
+        <button onclick="closeFolder()" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:6px; transition:color .2s;">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
     </div>
     <div id="folderC" style="overflow-y:auto;flex:1;"></div>
   </div>
@@ -665,6 +671,19 @@ function updateThUI(){
   const d=theme==='dark';document.getElementById('thtrack').classList.toggle('on',d);
   document.getElementById('thlbl').textContent=d?'Dark Mode':'Light Mode';
   document.getElementById('thico').innerHTML=d?'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>':'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+}
+
+// ===== CLEAR ALL =====
+function clearAllTasks() {
+  if(!tasks.length) { toast("Queue is already empty."); return; }
+  if(confirm("Move all tasks in the queue to the bin?")) {
+     const now = Date.now();
+     tasks.forEach(t => { t.deletedAt = now; deleted.unshift(t); });
+     tasks = [];
+     save();
+     render();
+     toast('🗑 Queue cleared.');
+  }
 }
 
 // ===== DRAWER =====
@@ -810,7 +829,7 @@ function renderTasks(){
           <div class="ttime">${fmt(task.mins*60+task.secs)}</div>
         </div>
         <div class="tbtns">
-          <button class="tbtn start" onclick="startTask('${task.id}')" title="Start Task"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+          <button class="tbtn start" onclick="startTask('${task.id}', true)" title="Start Task"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
         </div>
       </div>
     `;
@@ -831,7 +850,14 @@ function renderTasks(){
 }
 
 // ===== FOLDER =====
-function openFolder(type){curFolder=type;closeDrawer();document.getElementById('folderT').textContent=type==='completed'?'✅ Completed':'🗑 Bin';renderFolderC();document.getElementById('folderM').classList.add('open');}
+function openFolder(type){
+  curFolder=type;
+  closeDrawer();
+  document.getElementById('folderT').textContent=type==='completed'?'✅ Completed':'🗑 Bin';
+  document.getElementById('emptyBinBtn').style.display = type === 'deleted' ? 'block' : 'none';
+  renderFolderC();
+  document.getElementById('folderM').classList.add('open');
+}
 function closeFolder(){document.getElementById('folderM').classList.remove('open');curFolder=null;}
 function renderFolderC(){
   const el=document.getElementById('folderC'),list=curFolder==='completed'?completed:deleted;
@@ -850,25 +876,42 @@ function renderFolderC(){
     el.appendChild(d);
   });
 }
+function emptyBin() {
+  if(!deleted.length) return;
+  if(confirm("Are you sure you want to permanently delete all tasks in the bin?")) {
+     deleted = [];
+     save();
+     renderFolderC();
+     render();
+     toast('🗑 Bin emptied.');
+  }
+}
 
 // ===== TIMER =====
-// Updated to ALWAYS open in a paused state, awaiting manual start
-function startTask(id){
+// Added autoStart parameter. True when play button is clicked, False when skipping to next task
+function startTask(id, autoStart = true){
   if(activeId)stopTimer();
   const t=tasks.find(x=>x.id===id);if(!t)return;
   activeId=id;totalSecs=t.mins*60+t.secs;secsLeft=totalSecs;origSecs=totalSecs;
   
-  // Enforce manual start rule
-  paused=true; 
+  paused = !autoStart; 
   
   showAT(t);
   
-  // Force UI into a paused/ready-to-start state immediately
-  document.getElementById('pauseIco').innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
-  document.getElementById('mtPauseIco').innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
-  document.getElementById('pauseBtn').style.background='var(--bg4)';
-  document.getElementById('pauseLbl').textContent = 'Start';
-  document.getElementById('mtPlayBtn').style.background='var(--bg4)';
+  if(autoStart) {
+    document.getElementById('pauseIco').innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+    document.getElementById('mtPauseIco').innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+    document.getElementById('pauseBtn').style.background='var(--bg3)';
+    document.getElementById('pauseLbl').textContent = 'Pause';
+    document.getElementById('mtPlayBtn').style.background='var(--bg3)';
+    tick();
+  } else {
+    document.getElementById('pauseIco').innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
+    document.getElementById('mtPauseIco').innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
+    document.getElementById('pauseBtn').style.background='var(--bg4)';
+    document.getElementById('pauseLbl').textContent = 'Start';
+    document.getElementById('mtPlayBtn').style.background='var(--bg4)';
+  }
   
   render();
 }
@@ -976,8 +1019,8 @@ function skipAndNextActive(){
   
   const q = sorted();
   if(q.length > 0) {
-    // Calling startTask natively sets autoStart to false
-    startTask(q[0].id);
+    // Load next task but do NOT auto-start (pass false)
+    startTask(q[0].id, false);
   } else {
     render();
     toast('✅ All tasks completed!');

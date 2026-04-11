@@ -250,7 +250,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 .auth-divider { text-align: center; color: var(--text3); font-size: 12px; margin: 12px 0; display: flex; align-items: center; }
 .auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: var(--border); margin: 0 10px; }
 
-.mscrim{position:fixed;inset:0;background:var(--scrim);z-index:500;display:none;align-items:flex-start; justify-content:center;backdrop-filter:blur(8px);padding:20px;}
+.mscrim{position:fixed;inset:0;background:var(--scrim);z-index:1000;display:none;align-items:flex-start; justify-content:center;backdrop-filter:blur(8px);padding:20px;}
 .mscrim.open{display:flex;}
 .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 28px; padding: 24px 24px 32px; width: 100%; max-width: 480px; box-shadow: var(--shadow2); animation: sdown .28s cubic-bezier(.34,1.56,.64,1); max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); overflow-y: auto; overscroll-behavior: contain; }
 @keyframes sdown{from{transform:translateY(-100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
@@ -286,7 +286,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 .tidel{background:none;border:none;color:var(--text3);cursor:pointer;padding:6px;border-radius:8px;}
 .tidel:hover{color:var(--text);}
 
-.toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:12px 22px;border-radius:30px;font-size:14px;font-weight:500;z-index:999;opacity:0;transition:all .28s;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow2);}
+.toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:12px 22px;border-radius:30px;font-size:14px;font-weight:500;z-index:1001;opacity:0;transition:all .28s;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow2);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 </head>

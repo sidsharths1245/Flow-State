@@ -627,17 +627,12 @@ const db = getFirestore(app);
 let currentUser = null;
 let unsubSnapshot = null;
 
-// Handle Auth State Changes & Real-Time Sync
 onAuthStateChanged(auth, (user) => {
   if (user) {
     currentUser = user;
-    
-    // Update UI for logged in state
     document.getElementById('authSignedOut').style.display = 'none';
     document.getElementById('authSignedIn').style.display = 'block';
     document.getElementById('currentUserLbl').textContent = "Signed in as " + (user.displayName || user.email);
-    
-    // REAL-TIME LISTENER
     unsubSnapshot = onSnapshot(doc(db, "users", user.uid), (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data();
@@ -645,18 +640,14 @@ onAuthStateChanged(auth, (user) => {
         completed = data.completed || [];
         deleted = data.deleted || [];
         templates = data.templates || [];
-        
-        // Sync Active Timer State
         const ast = data.activeState;
         if (ast) {
-           // Prevent the active ticking timer from stuttering if local state is roughly the same
            if (ast.id !== activeId || ast.paused !== paused || Math.abs(ast.secsLeft - secsLeft) > 5) {
                activeId = ast.id;
                secsLeft = ast.secsLeft;
                totalSecs = ast.totalSecs;
                origSecs = ast.origSecs;
                paused = ast.paused;
-               
                if (activeId) {
                    const t = tasks.find(x => x.id === activeId);
                    if (t) {
@@ -664,37 +655,19 @@ onAuthStateChanged(auth, (user) => {
                        syncPlayPauseUI();
                        if (!paused) { clearInterval(ticker); tick(); }
                        else { clearInterval(ticker); }
-                   } else {
-                       stopTimerLocalUI();
-                   }
-               } else {
-                   stopTimerLocalUI();
-               }
+                   } else { stopTimerLocalUI(); }
+               } else { stopTimerLocalUI(); }
            }
-        } else {
-           if(activeId) stopTimerLocalUI();
-        }
-        
+        } else { if(activeId) stopTimerLocalUI(); }
         saveLocalOnly();
         render();
       }
-    }, (error) => {
-      console.error("Real-time sync error:", error);
     });
-
   } else {
     currentUser = null;
-    
-    // Update UI for logged out state
     document.getElementById('authSignedOut').style.display = 'block';
     document.getElementById('authSignedIn').style.display = 'none';
-    document.getElementById('authEmail').value = '';
-    document.getElementById('authPass').value = '';
-    
-    if (unsubSnapshot) {
-      unsubSnapshot();
-      unsubSnapshot = null;
-    }
+    if (unsubSnapshot) { unsubSnapshot(); unsubSnapshot = null; }
   }
 });
 
@@ -703,97 +676,73 @@ window.emailLogin = async function() {
   const email = document.getElementById('authEmail').value.trim();
   const pass = document.getElementById('authPass').value;
   if(!email || !pass) { toast("Enter email and password."); return; }
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    closeDrawer();
-  } catch(e) {
-    toast("Login failed. Check credentials.");
-    console.error(e);
-  }
+  try { await signInWithEmailAndPassword(auth, email, pass); closeDrawer(); } catch(e) { toast("Login failed."); }
 };
-
 window.resetPassword = async function() {
   const email = document.getElementById('authEmail').value.trim();
-  if(!email) { 
-    toast("Enter your email address first."); 
-    return; 
-  }
-  try {
-    await sendPasswordResetEmail(auth, email);
-    toast("Password reset email sent!");
-  } catch(e) {
-    toast("Error sending reset email.");
-    console.error(e);
-  }
+  if(!email) { toast("Enter your email address."); return; }
+  try { await sendPasswordResetEmail(auth, email); toast("Reset email sent!"); } catch(e) { toast("Error sending reset email."); }
 };
-
-window.logOutUser = async function() {
-  await signOut(auth);
-  toast("Working offline.");
-  closeDrawer();
-};
+window.logOutUser = async function() { await signOut(auth); toast("Working offline."); closeDrawer(); };
 
 // ===== AUDIO =====
 let sndCtx=null,sndOn=true;
 function ac(){if(!sndCtx)sndCtx=new(window.AudioContext||window.webkitAudioContext)();if(sndCtx.state==='suspended')sndCtx.resume();return sndCtx;}
 
+function p(f,d,t='sine',v=1,dl=0){
+  const c=ac(),m=c.createGain();m.gain.value=0.2;m.connect(c.destination);
+  const o=c.createOscillator(),g=c.createGain();
+  o.type=t;o.frequency.value=f;
+  g.gain.setValueAtTime(0,c.currentTime+dl);
+  g.gain.linearRampToValueAtTime(v,c.currentTime+dl+0.01);
+  g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+dl+d);
+  o.connect(g);g.connect(m);o.start(c.currentTime+dl);o.stop(c.currentTime+dl+d+0.05);
+}
+
 function playAlarm(){
   if(!sndOn)return;
-  try{
-    const c=ac(),m=c.createGain();m.gain.value=0.2;m.connect(c.destination);
-    const p=(f,d,t='sine',v=1,dl=0)=>{
-      const o=c.createOscillator(),g=c.createGain();
-      o.type=t;o.frequency.value=f;
-      g.gain.setValueAtTime(0,c.currentTime+dl);
-      g.gain.linearRampToValueAtTime(v,c.currentTime+dl+0.01);
-      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+dl+d);
-      o.connect(g);g.connect(m);o.start(c.currentTime+dl);o.stop(c.currentTime+dl+d+0.05);
-    };
-    
-    const alarmType = document.getElementById('alarmSel').value;
-    
-    if(alarmType === 'default') {
-      for(let i=0;i<3;i++){p(880,.12,'square',.5,i*.22);p(440,.1,'square',.3,i*.22+.12);}
-    } else if (alarmType === 'chime') {
-      p(1047, .2); p(1318, .6, 'sine', 1, .25);
-    } else if (alarmType === 'buzzer') {
-      for(let i=0;i<4;i++){p(300,.2,'sawtooth',.6,i*.3);}
-    }
-  }catch(e){}
+  const alarmType = document.getElementById('alarmSel').value;
+  if(alarmType === 'default') { for(let i=0;i<3;i++){p(880,.12,'square',.5,i*.22);p(440,.1,'square',.3,i*.22+.12);} }
+  else if (alarmType === 'chime') { p(1047, .2); p(1318, .6, 'sine', 1, .25); }
+  else if (alarmType === 'buzzer') { for(let i=0;i<4;i++){p(300,.2,'sawtooth',.6,i*.3);} }
 }
+
+function playHalfwaySound(){
+  if(!sndOn) return;
+  // First Triple Beep
+  p(880, 0.08, 'square', 0.5, 0);    
+  p(980, 0.08, 'square', 0.5, 0.12); 
+  p(1100, 0.1, 'square', 0.5, 0.24); 
+  // Second Triple Beep (1.0s gap)
+  p(880, 0.08, 'square', 0.5, 1.0);    
+  p(980, 0.08, 'square', 0.5, 1.12); 
+  p(1100, 0.1, 'square', 0.5, 1.24);
+}
+
+function playTickSound(){ if(!sndOn) return; p(880, 0.1, 'square', 0.3, 0); }
 
 const sndTrack=document.getElementById('sndtrack');
 sndTrack.onclick=()=>{sndOn=!sndOn;sndTrack.classList.toggle('on',sndOn);localStorage.setItem('ff_snd',sndOn?'1':'0');};
 if(localStorage.getItem('ff_snd')==='0'){sndOn=false;sndTrack.classList.remove('on');}
-
 const alarmSel = document.getElementById('alarmSel');
 alarmSel.value = localStorage.getItem('ff_alarm') || 'default';
-alarmSel.addEventListener('change', (e) => {
-  localStorage.setItem('ff_alarm', e.target.value);
-  playAlarm(); 
-});
+alarmSel.addEventListener('change', (e) => { localStorage.setItem('ff_alarm', e.target.value); playAlarm(); });
 
 // ===== STATE =====
 let tasks=JSON.parse(localStorage.getItem('ff_t')||'[]');
 let completed=JSON.parse(localStorage.getItem('ff_c')||'[]');
 let deleted=JSON.parse(localStorage.getItem('ff_d')||'[]');
 let templates=JSON.parse(localStorage.getItem('ff_tmpl')||'[]');
-
 let activeId=null,ticker=null,secsLeft=0,totalSecs=0,origSecs=0,paused=true;
 let sortMode=null,sortDir='asc',editId=null,selPrio='medium',curFolder=null;
 let activeFilter='all';
 
-// Boot active timer state from local storage so it survives refresh
 let astLoad = JSON.parse(localStorage.getItem('ff_active') || 'null');
 if (astLoad && astLoad.id) {
-    activeId = astLoad.id;
-    secsLeft = astLoad.secsLeft;
-    totalSecs = astLoad.totalSecs;
-    origSecs = astLoad.origSecs;
-    paused = astLoad.paused;
+    activeId = astLoad.id; secsLeft = astLoad.secsLeft;
+    totalSecs = astLoad.totalSecs; origSecs = astLoad.origSecs; paused = astLoad.paused;
 }
 
-// Local Saving
 function saveLocalOnly() {
   localStorage.setItem('ff_t',JSON.stringify(tasks));
   localStorage.setItem('ff_c',JSON.stringify(completed));
@@ -802,23 +751,23 @@ function saveLocalOnly() {
   localStorage.setItem('ff_active', JSON.stringify({id: activeId, secsLeft, totalSecs, origSecs, paused}));
 }
 
-// Cloud Saving
 async function save(){
   saveLocalOnly();
   if (currentUser) {
-    try {
-      await setDoc(doc(db, "users", currentUser.uid), {
-        tasks, completed, deleted, templates,
-        activeState: {id: activeId, secsLeft, totalSecs, origSecs, paused},
-        lastUpdated: Date.now()
-      }, { merge: true });
-    } catch (e) {
-      console.error("Cloud Sync Error:", e);
-    }
+    try { await setDoc(doc(db, "users", currentUser.uid), {
+      tasks, completed, deleted, templates,
+      activeState: {id: activeId, secsLeft, totalSecs, origSecs, paused}, lastUpdated: Date.now()
+    }, { merge: true }); } catch (e) {}
   }
 }
 
-function autoPurge(){const now=Date.now();const old=completed.filter(t=>now-t.completedAt>72*3600000);old.forEach(t=>{t.deletedAt=now;deleted.unshift(t);});completed=completed.filter(t=>now-t.completedAt<=72*3600000);if(old.length){save();render();}}
+function autoPurge(){
+  const now=Date.now();
+  const old=completed.filter(t=>now-t.completedAt>72*3600000);
+  old.forEach(t=>{t.deletedAt=now;deleted.unshift(t);});
+  completed=completed.filter(t=>now-t.completedAt<=72*3600000);
+  if(old.length){save();render();}
+}
 setInterval(autoPurge,60000);autoPurge();
 
 // ===== THEME =====
@@ -831,26 +780,20 @@ function updateThUI(){
   document.getElementById('thico').innerHTML=d?'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>':'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
 }
 
-// ===== CLEAR ALL =====
 window.clearAllTasks = function() {
   if(!tasks.length) { toast("Queue is already empty."); return; }
   if(confirm("Move all tasks in the queue to the bin?")) {
      const now = Date.now();
      tasks.forEach(t => { t.deletedAt = now; deleted.unshift(t); });
-     tasks = [];
-     save();
-     render();
-     toast('Queue cleared.');
+     tasks = []; save(); render(); toast('Queue cleared.');
   }
 }
 
-// ===== DRAWER =====
 const drawer=document.getElementById('drawer'),dscrim=document.getElementById('dscrim');
 document.getElementById('hamBtn').onclick=()=>{drawer.classList.add('open');dscrim.classList.add('open');};
 document.getElementById('dclose').onclick=closeDrawer;dscrim.onclick=closeDrawer;
 function closeDrawer(){drawer.classList.remove('open');dscrim.classList.remove('open');}
 
-// ===== SORT =====
 const sortBtn=document.getElementById('sortBtn'),sdrop=document.getElementById('sdrop');
 sortBtn.onclick=e=>{e.stopPropagation();sdrop.classList.toggle('open');};
 document.addEventListener('click',()=>sdrop.classList.remove('open'));
@@ -858,10 +801,8 @@ document.querySelectorAll('.sopt').forEach(o=>{
   o.onclick=e=>{e.stopPropagation();sortMode=o.dataset.s==='none'?null:o.dataset.s;sdrop.classList.remove('open');updateSortUI();render();};
 });
 window.setSortDir = function(dir){
-  sortDir = dir;
-  document.getElementById('sortAsc').classList.toggle('active', dir === 'asc');
-  document.getElementById('sortDesc').classList.toggle('active', dir === 'desc');
-  render();
+  sortDir = dir; document.getElementById('sortAsc').classList.toggle('active', dir === 'asc');
+  document.getElementById('sortDesc').classList.toggle('active', dir === 'desc'); render();
 }
 function updateSortUI(){
   sortBtn.classList.toggle('on',!!sortMode);
@@ -874,51 +815,27 @@ function updateSortUI(){
 }
 updateSortUI();
 
-// ===== FILTERS =====
 document.querySelectorAll('.fpill').forEach(b => {
   b.onclick = () => {
     document.querySelectorAll('.fpill').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-    activeFilter = b.dataset.f;
-    render();
+    b.classList.add('active'); activeFilter = b.dataset.f; render();
   };
 });
 
-// ===== GMAIL SWIPE LOGIC =====
 let swEl = null, swStartX = 0, swStartY = 0, isSw = null;
 function onSwipeStart(e){
   if(e.target.closest('.dh') || e.target.closest('.tbtn') || e.target.closest('.ti-checkbox')) return;
-  swEl = this;
-  swStartX = e.touches[0].clientX;
-  swStartY = e.touches[0].clientY;
-  isSw = null;
-  swEl.style.transition = 'none';
+  swEl = this; swStartX = e.touches[0].clientX; swStartY = e.touches[0].clientY; isSw = null; swEl.style.transition = 'none';
 }
 function onSwipeMove(e){
   if(!swEl) return;
   const x = e.touches[0].clientX, y = e.touches[0].clientY;
   const dx = x - swStartX, dy = y - swStartY;
-  
-  if(isSw === null){
-    if(Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) isSw = true;
-    else if(Math.abs(dy) > 10) isSw = false;
-  }
-  
+  if(isSw === null){ if(Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) isSw = true; else if(Math.abs(dy) > 10) isSw = false; }
   if(isSw){
-    e.preventDefault(); 
-    swEl.style.transform = `translateX(${dx}px)`;
-    
-    const wrap = swEl.parentElement;
-    const bgL = wrap.querySelector('.ti-bg-left');
-    const bgR = wrap.querySelector('.ti-bg-right');
-    
-    if(dx > 0) { 
-      bgL.style.opacity = Math.min(dx / 60, 1); 
-      bgR.style.opacity = 0; 
-    } else { 
-      bgL.style.opacity = 0; 
-      bgR.style.opacity = Math.min(-dx / 60, 1); 
-    }
+    e.preventDefault(); swEl.style.transform = `translateX(${dx}px)`;
+    const wrap = swEl.parentElement; const bgL = wrap.querySelector('.ti-bg-left'); const bgR = wrap.querySelector('.ti-bg-right');
+    if(dx > 0) { bgL.style.opacity = Math.min(dx / 60, 1); bgR.style.opacity = 0; } else { bgL.style.opacity = 0; bgR.style.opacity = Math.min(-dx / 60, 1); }
   }
 }
 function onSwipeEnd(e){
@@ -927,41 +844,20 @@ function onSwipeEnd(e){
     const dx = parseFloat(swEl.style.transform.replace('translateX(','')) || 0;
     swEl.style.transition = 'transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)';
     const tid = swEl.dataset.id;
-    
-    if(dx > 80){
-      swEl.style.transform = `translateX(100%)`;
-      setTimeout(()=> window.completeTask(tid), 250);
-    } else if(dx < -80){
-      swEl.style.transform = `translateX(-100%)`;
-      setTimeout(()=> window.deleteTask(tid), 250);
-    } else {
-      swEl.style.transform = `translateX(0)`;
-      const wrap = swEl.parentElement;
-      setTimeout(() => {
-         wrap.querySelector('.ti-bg-left').style.opacity = 0;
-         wrap.querySelector('.ti-bg-right').style.opacity = 0;
-      }, 250);
-    }
+    if(dx > 80){ swEl.style.transform = `translateX(100%)`; setTimeout(()=> window.completeTask(tid), 250); }
+    else if(dx < -80){ swEl.style.transform = `translateX(-100%)`; setTimeout(()=> window.deleteTask(tid), 250); }
+    else { swEl.style.transform = `translateX(0)`; const wrap = swEl.parentElement; setTimeout(() => { wrap.querySelector('.ti-bg-left').style.opacity = 0; wrap.querySelector('.ti-bg-right').style.opacity = 0; }, 250); }
   }
   swEl = null;
 }
 
-// ===== RENDER =====
 function render(){
   let q=tasks.filter(t=>t.id!==activeId);
-  
-  // Apply Filter First
-  if(activeFilter === 'high') {
-     q = q.filter(t => t.priority === 'critical' || t.priority === 'high');
-  } else if (activeFilter === 'quick') {
-     q = q.filter(t => (t.mins * 60 + t.secs) <= 900);
-  } else if (activeFilter === 'long') {
-     q = q.filter(t => (t.mins * 60 + t.secs) > 1800);
-  } else if (activeFilter === 'med') {
-     q = q.filter(t => t.priority === 'medium');
-  } else if (activeFilter === 'low') {
-     q = q.filter(t => t.priority === 'low');
-  }
+  if(activeFilter === 'high') { q = q.filter(t => t.priority === 'critical' || t.priority === 'high'); }
+  else if (activeFilter === 'quick') { q = q.filter(t => (t.mins * 60 + t.secs) <= 900); }
+  else if (activeFilter === 'long') { q = q.filter(t => (t.mins * 60 + t.secs) > 1800); }
+  else if (activeFilter === 'med') { q = q.filter(t => t.priority === 'medium'); }
+  else if (activeFilter === 'low') { q = q.filter(t => t.priority === 'low'); }
   
   const tot=q.reduce((s,t)=>s+t.mins*60+t.secs,0)+(activeId?secsLeft:0);
   document.getElementById('qTime').textContent=fmtLong(tot);
@@ -972,29 +868,16 @@ function render(){
   document.getElementById('dbTmpl').textContent=templates.length;
   renderTasks(q);
   if(curFolder)renderFolderC();
-  
-  // Boot active timer UI if needed
   if(activeId) {
      const t = tasks.find(x => x.id === activeId);
-     if(t) {
-         showAT(t);
-         syncPlayPauseUI();
-         if(!paused && !ticker) { tick(); }
-     }
+     if(t) { showAT(t); syncPlayPauseUI(); if(!paused && !ticker) { tick(); } }
   }
 }
 
 function sorted(baseArray){
   let l=[...baseArray];
-  if(sortMode==='time'){
-    l.sort((a,b)=>(a.mins*60+a.secs)-(b.mins*60+b.secs));
-    if(sortDir === 'desc') l.reverse();
-  }
-  else if(sortMode==='priority'){
-    const PO={critical:0,high:1,medium:2,low:3};
-    l.sort((a,b)=>PO[a.priority]-PO[b.priority]);
-    if(sortDir === 'desc') l.reverse();
-  }
+  if(sortMode==='time'){ l.sort((a,b)=>(a.mins*60+a.secs)-(b.mins*60+b.secs)); if(sortDir === 'desc') l.reverse(); }
+  else if(sortMode==='priority'){ const PO={critical:0,high:1,medium:2,low:3}; l.sort((a,b)=>PO[a.priority]-PO[b.priority]); if(sortDir === 'desc') l.reverse(); }
   return l;
 }
 
@@ -1002,158 +885,77 @@ function renderTasks(qArray){
   const el=document.getElementById('taskItems'),hdr=document.getElementById('qhdr');
   const q = sorted(qArray);
   hdr.style.display=q.length?'flex':'none';
-  if(!tasks.length&&!activeId){
-    el.innerHTML=`<div class="empty"><svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><p>No tasks yet.<br>Tap <strong>+</strong> to get started.</p></div>`;
-    return;
-  }
-  if(tasks.length && !q.length) {
-    el.innerHTML=`<div class="empty"><p style="margin-top:20px;">No tasks match this filter.</p></div>`;
-    return;
-  }
+  if(!tasks.length&&!activeId){ el.innerHTML=`<div class="empty"><svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><p>No tasks yet.<br>Tap <strong>+</strong> to get started.</p></div>`; return; }
   
   el.innerHTML='';
   q.forEach(task=>{
     const ri=tasks.findIndex(t=>t.id===task.id);
     const w = document.createElement('div');
     w.className = 'ti-wrap';
-    
     const dragEnabled = !sortMode && activeFilter === 'all';
-    
     w.innerHTML=`
       <div class="ti-bg ti-bg-left"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="ti-bg ti-bg-right"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
       <div class="ti" data-id="${task.id}" data-idx="${ri}" draggable="${dragEnabled}">
-        
-        <div class="ti-header">
-           <div class="p-pill ${task.priority}">${task.priority}</div>
-           <div class="ti-checkbox" onclick="completeTask('${task.id}'); event.stopPropagation();"></div>
-        </div>
-        
-        <div class="ti-body" onclick="openEditTask('${task.id}')" title="Click to edit">
-          <div class="tname">${esc(task.name)}</div>
-          ${task.desc ? `<div class="tdesc">${esc(task.desc)}</div>` : ''}
-        </div>
-        
+        <div class="ti-header"> <div class="p-pill ${task.priority}">${task.priority}</div> <div class="ti-checkbox" onclick="completeTask('${task.id}'); event.stopPropagation();"></div> </div>
+        <div class="ti-body" onclick="openEditTask('${task.id}')"> <div class="tname">${esc(task.name)}</div> ${task.desc ? `<div class="tdesc">${esc(task.desc)}</div>` : ''} </div>
         <div class="ti-footer">
-          <div class="ttime-wrap">
-             <div class="dh" style="${dragEnabled ? '' : 'display:none;'}"><svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><circle cx="9" cy="5" r="1.3"/><circle cx="15" cy="5" r="1.3"/><circle cx="9" cy="12" r="1.3"/><circle cx="15" cy="12" r="1.3"/><circle cx="9" cy="19" r="1.3"/><circle cx="15" cy="19" r="1.3"/></svg></div>
-             <span class="ttime">${fmt(task.mins*60+task.secs)}</span>
-          </div>
-          <button class="tbtn start" onclick="startTask('${task.id}', true); event.stopPropagation();" title="Start Task">
-            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start
-          </button>
+          <div class="ttime-wrap"> <div class="dh" style="${dragEnabled ? '' : 'display:none;'}"><svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><circle cx="9" cy="5" r="1.3"/><circle cx="15" cy="5" r="1.3"/><circle cx="9" cy="12" r="1.3"/><circle cx="15" cy="12" r="1.3"/><circle cx="9" cy="19" r="1.3"/><circle cx="15" cy="19" r="1.3"/></svg></div> <span class="ttime">${fmt(task.mins*60+task.secs)}</span> </div>
+          <button class="tbtn start" onclick="startTask('${task.id}', true); event.stopPropagation();"> <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start </button>
         </div>
-        
-      </div>
-    `;
-
+      </div>`;
     const tiNode = w.querySelector('.ti');
     if(dragEnabled) {
-      tiNode.addEventListener('dragstart',onDS);
-      tiNode.addEventListener('dragover',onDO);
-      tiNode.addEventListener('drop',onDrop);
-      tiNode.addEventListener('dragend',onDE);
+      tiNode.addEventListener('dragstart',onDS); tiNode.addEventListener('dragover',onDO); tiNode.addEventListener('drop',onDrop); tiNode.addEventListener('dragend',onDE);
       w.querySelector('.dh').addEventListener('touchstart',onTS,{passive:true});
     }
-
-    tiNode.addEventListener('touchstart', onSwipeStart, {passive: true});
-    tiNode.addEventListener('touchmove', onSwipeMove, {passive: false});
-    tiNode.addEventListener('touchend', onSwipeEnd);
-
+    tiNode.addEventListener('touchstart', onSwipeStart, {passive: true}); tiNode.addEventListener('touchmove', onSwipeMove, {passive: false}); tiNode.addEventListener('touchend', onSwipeEnd);
     el.appendChild(w);
   });
 }
 
-// ===== FOLDER =====
 window.openFolder = function(type){
-  curFolder=type;
-  closeDrawer();
-  document.getElementById('folderT').textContent=type==='completed'?'Completed':'Bin';
-  document.getElementById('emptyBinBtn').style.display = type === 'deleted' ? 'block' : 'none';
-  renderFolderC();
-  document.getElementById('folderM').classList.add('open');
+  curFolder=type; closeDrawer(); document.getElementById('folderT').textContent=type==='completed'?'Completed':'Bin';
+  document.getElementById('emptyBinBtn').style.display = type === 'deleted' ? 'block' : 'none'; renderFolderC(); document.getElementById('folderM').classList.add('open');
 }
 window.closeFolder = function(){document.getElementById('folderM').classList.remove('open');curFolder=null;}
 function renderFolderC(){
   const el=document.getElementById('folderC'),list=curFolder==='completed'?completed:deleted;
-  if(!list.length){el.innerHTML=`<div class="empty" style="padding:32px 0;"><p>${curFolder==='completed'?'No completed tasks.':'Bin is empty.'}</p></div>`;return;}
+  if(!list.length){el.innerHTML=`<div class="empty" style="padding:32px 0;"><p>Folder is empty.</p></div>`;return;}
   el.innerHTML='';
   list.forEach(t=>{
     const ts=curFolder==='completed'?t.completedAt:(t.deletedAt||t.completedAt||Date.now());
-    const ago=tsince(ts);
     const d=document.createElement('div');d.className='fi';
-    let meta=curFolder==='completed'?`Completed ${ago} · auto-bins in ${Math.max(0,Math.floor(72-(Date.now()-t.completedAt)/3600000))}h`:`Deleted ${ago}`;
-    d.innerHTML=`<div class="fi-info"><div class="fi-name">${esc(t.name)}</div><div class="fi-meta">${meta}</div></div>
+    d.innerHTML=`<div class="fi-info"><div class="fi-name">${esc(t.name)}</div><div class="fi-meta">${tsince(ts)}</div></div>
     <div class="fi-btns">
       <button class="rbtn" onclick="${curFolder==='completed'?`restoreComp('${t.id}')`:`restoreDel('${t.id}')`}"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.58"/></svg></button>
-      <button class="pbtn-folder" onclick="${curFolder==='completed'?`compToBin('${t.id}')`:`permDel('${t.id}')`}">${curFolder==='completed'?'<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>':'<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'}</button>
-    </div>`;
-    el.appendChild(d);
+      <button class="pbtn-folder" onclick="${curFolder==='completed'?`compToBin('${t.id}')`:`permDel('${t.id}')`}">${curFolder==='completed'?'<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>':'<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'}</button>
+    </div>`; el.appendChild(d);
   });
 }
-window.emptyBin = function() {
-  if(!deleted.length) return;
-  if(confirm("Are you sure you want to permanently delete all tasks in the bin?")) {
-     deleted = [];
-     save();
-     renderFolderC();
-     render();
-     toast('Bin emptied.');
-  }
-}
+window.emptyBin = function() { if(confirm("Empty bin permanently?")) { deleted = []; save(); renderFolderC(); render(); toast('Bin emptied.'); } }
 
 // ===== TIMER =====
 window.startTask = function(id, autoStart = true){
   if(activeId)stopTimer();
   const t=tasks.find(x=>x.id===id);if(!t)return;
-  activeId=id;totalSecs=t.mins*60+t.secs;secsLeft=totalSecs;origSecs=totalSecs;
-  
-  paused = !autoStart; 
-  showAT(t);
-  syncPlayPauseUI();
-  
-  if(autoStart) { tick(); }
-  
-  save(); // Cloud Sync the Start state
-  render();
+  activeId=id; totalSecs=t.mins*60+t.secs; secsLeft=totalSecs; origSecs=totalSecs;
+  paused = !autoStart; showAT(t); syncPlayPauseUI();
+  if(autoStart) { tick(); } save(); render();
 }
 
 function showAT(t){
-  document.getElementById('atOverlay').style.display='flex';
-  document.getElementById('miniTimer').style.display='none';
-  
-  document.getElementById('atname').textContent=t.name;
-  document.getElementById('mtname').textContent=t.name;
-  
-  const atPill = document.getElementById('atpill');
-  atPill.className = 'p-pill ' + t.priority;
-  atPill.textContent = t.priority;
-
-  const mtPill = document.getElementById('mtpill');
-  mtPill.className = 'p-pill ' + t.priority;
-  mtPill.textContent = t.priority;
-  
+  document.getElementById('atOverlay').style.display='flex'; document.getElementById('miniTimer').style.display='none';
+  document.getElementById('atname').textContent=t.name; document.getElementById('mtname').textContent=t.name;
+  document.getElementById('atpill').className = 'p-pill ' + t.priority; document.getElementById('atpill').textContent = t.priority;
+  document.getElementById('mtpill').className = 'p-pill ' + t.priority; document.getElementById('mtpill').textContent = t.priority;
   updRing();
 }
 
 function syncPlayPauseUI() {
-    const ico=document.getElementById('pauseIco'),btn=document.getElementById('pauseBtn');
-    const mIco=document.getElementById('mtPauseIco'),mBtn=document.getElementById('mtPlayBtn');
-    const lbl=document.getElementById('pauseLbl');
-    
-    if(paused){
-      ico.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
-      mIco.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
-      btn.style.background='var(--bg4)';
-      lbl.textContent = 'Resume';
-      mBtn.style.background='var(--bg4)';
-    } else {
-      ico.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
-      mIco.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
-      btn.style.background='var(--bg3)';
-      lbl.textContent = 'Pause';
-      mBtn.style.background='var(--bg3)';
-    }
+    const ico=document.getElementById('pauseIco'),btn=document.getElementById('pauseBtn'),mIco=document.getElementById('mtPauseIco'),mBtn=document.getElementById('mtPlayBtn'),lbl=document.getElementById('pauseLbl');
+    if(paused){ ico.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>'; mIco.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>'; btn.style.background='var(--bg4)'; lbl.textContent = 'Resume'; mBtn.style.background='var(--bg4)'; }
+    else { ico.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'; mIco.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'; btn.style.background='var(--bg3)'; lbl.textContent = 'Pause'; mBtn.style.background='var(--bg3)'; }
 }
 
 function tick(){
@@ -1161,174 +963,79 @@ function tick(){
   ticker=setInterval(()=>{
     if(paused)return;
     if(secsLeft>0){
-      secsLeft--;
-      updRing();
-      // Notice we do NOT call save() here. That would spam Firestore every second.
+      secsLeft--; updRing();
+      // Halfway sound logic
+      if (totalSecs > 10 && secsLeft === Math.floor(totalSecs / 2)) { playHalfwaySound(); toast("Halfway there!"); }
+      // Final 5 seconds tick
+      if (secsLeft <= 5 && secsLeft > 0) { playTickSound(); }
     } else {
-      clearInterval(ticker);
-      playAlarm();
-      document.getElementById('ring').style.stroke='var(--red)';
-      toast("Time's up! Add more time or complete.");
+      clearInterval(ticker); playAlarm(); document.getElementById('ring').style.stroke='var(--red)'; toast("Time's up!");
     }
   },1000);
 }
 
 function updRing(){
-  const str = fmt(secsLeft);
-  document.getElementById('rtime').textContent = str;
-  document.getElementById('mttime').textContent = str;
-  
-  const p=totalSecs>0?secsLeft/totalSecs:0;
-  document.getElementById('ring').style.strokeDashoffset=565.5*(1-p);
+  const str = fmt(secsLeft); document.getElementById('rtime').textContent = str; document.getElementById('mttime').textContent = str;
+  const p=totalSecs>0?secsLeft/totalSecs:0; document.getElementById('ring').style.strokeDashoffset=565.5*(1-p);
   if(secsLeft>0)document.getElementById('ring').style.stroke='url(#timerGradient)';
 }
 
-function stopTimerLocalUI() {
-  clearInterval(ticker);ticker=null;activeId=null;paused=true;
-  document.getElementById('atOverlay').style.display='none';
-  document.getElementById('miniTimer').style.display='none';
-}
-
-function stopTimer(){
-  if(activeId) {
-    const t=tasks.find(x=>x.id===activeId);
-    if(t){ t.mins=Math.floor(secsLeft/60); t.secs=secsLeft%60; }
-  }
-  stopTimerLocalUI();
-  save();
-}
-
-window.pauseResume = function(e){
-  if(e) e.stopPropagation();
-  paused=!paused;
-  syncPlayPauseUI();
-  
-  if(paused) {
-     clearInterval(ticker);
-  } else {
-     if(secsLeft===0) tick();
-     else { clearInterval(ticker); tick(); }
-  }
-  save(); // Cloud Sync Pause State
-}
-
-window.minimizeActive = function(){
-  document.getElementById('atOverlay').style.display='none';
-  document.getElementById('miniTimer').style.display='flex';
-}
-
-window.maximizeActive = function(){
-  document.getElementById('atOverlay').style.display='flex';
-  document.getElementById('miniTimer').style.display='none';
-}
-
-window.completeActive = function(){const t=tasks.find(x=>x.id===activeId);if(!t)return;t.completedAt=Date.now();completed.unshift(t);tasks=tasks.filter(x=>x.id!==activeId);stopTimerLocalUI();save();render();toast('Task completed!');}
-
+function stopTimerLocalUI() { clearInterval(ticker);ticker=null;activeId=null;paused=true; document.getElementById('atOverlay').style.display='none'; document.getElementById('miniTimer').style.display='none'; }
+function stopTimer(){ if(activeId) { const t=tasks.find(x=>x.id===activeId); if(t){ t.mins=Math.floor(secsLeft/60); t.secs=secsLeft%60; } } stopTimerLocalUI(); save(); }
+window.pauseResume = function(e){ if(e) e.stopPropagation(); paused=!paused; syncPlayPauseUI(); if(paused) { clearInterval(ticker); } else { tick(); } save(); }
+window.minimizeActive = function(){ document.getElementById('atOverlay').style.display='none'; document.getElementById('miniTimer').style.display='flex'; }
+window.maximizeActive = function(){ document.getElementById('atOverlay').style.display='flex'; document.getElementById('miniTimer').style.display='none'; }
+window.completeActive = function(){ const t=tasks.find(x=>x.id===activeId); if(!t)return; t.completedAt=Date.now(); completed.unshift(t); tasks=tasks.filter(x=>x.id!==activeId); stopTimerLocalUI(); save(); render(); }
 window.skipAndNextActive = function(){
-  if(!activeId) return;
-  const t = tasks.find(x=>x.id===activeId);
-  if(t){
-    t.completedAt=Date.now();
-    completed.unshift(t);
-    tasks=tasks.filter(x=>x.id!==activeId);
-  }
-  stopTimerLocalUI();
-  save();
-  
-  const q = sorted(tasks);
-  if(q.length > 0) {
-    window.startTask(q[0].id, false);
-  } else {
-    render();
-    toast('All tasks completed!');
-  }
+  if(!activeId) return; const t = tasks.find(x=>x.id===activeId);
+  if(t){ t.completedAt=Date.now(); completed.unshift(t); tasks=tasks.filter(x=>x.id!==activeId); }
+  stopTimerLocalUI(); save(); const q = sorted(tasks); if(q.length > 0) { window.startTask(q[0].id, false); } else { render(); }
 }
-
-window.completeTask = function(id){const t=tasks.find(x=>x.id===id);if(!t)return;t.completedAt=Date.now();completed.unshift(t);tasks=tasks.filter(x=>x.id!==id);if(activeId===id)stopTimerLocalUI();save();render();toast('Task completed!');}
-
-window.resetActive = function(){
-  secsLeft=origSecs;totalSecs=origSecs;
-  const t=tasks.find(x=>x.id===activeId);if(t){t.mins=Math.floor(origSecs/60);t.secs=origSecs%60;}
-  document.getElementById('ring').style.stroke='url(#timerGradient)';
-  updRing();
-  save(); // Cloud Sync Reset State
-  toast('Timer reset.');
-  
-  if(!paused) {
-     clearInterval(ticker);
-     tick();
-  }
-}
-
+window.completeTask = function(id){ const t=tasks.find(x=>x.id===id); if(!t)return; t.completedAt=Date.now(); completed.unshift(t); tasks=tasks.filter(x=>x.id!==id); if(activeId===id)stopTimerLocalUI(); save(); render(); }
+window.resetActive = function(){ secsLeft=origSecs; totalSecs=origSecs; updRing(); save(); if(!paused) { clearInterval(ticker); tick(); } }
 window.deleteActive = function(){window.deleteTask(activeId);}
-window.deleteTask = function(id){const t=tasks.find(x=>x.id===id);if(!t)return;t.deletedAt=Date.now();deleted.unshift(t);tasks=tasks.filter(x=>x.id!==id);if(activeId===id)stopTimerLocalUI();save();render();toast('Task deleted.');}
-window.restoreComp = function(id){const t=completed.find(x=>x.id===id);if(!t)return;delete t.completedAt;tasks.push(t);completed=completed.filter(x=>x.id!==id);save();render();toast('Restored to queue.');}
-window.compToBin = function(id){const t=completed.find(x=>x.id===id);if(!t)return;t.deletedAt=Date.now();deleted.unshift(t);completed=completed.filter(x=>x.id!==id);save();render();toast('Moved to bin.');}
-window.restoreDel = function(id){const t=deleted.find(x=>x.id===id);if(!t)return;delete t.deletedAt;delete t.completedAt;tasks.push(t);deleted=deleted.filter(x=>x.id!==id);save();render();toast('Restored to queue.');}
-window.permDel = function(id){deleted=deleted.filter(x=>x.id!==id);save();render();toast('Permanently deleted.');}
+window.deleteTask = function(id){ const t=tasks.find(x=>x.id===id); if(!t)return; t.deletedAt=Date.now(); deleted.unshift(t); tasks=tasks.filter(x=>x.id!==id); if(activeId===id)stopTimerLocalUI(); save(); render(); }
+window.restoreComp = function(id){ const t=completed.find(x=>x.id===id); if(!t)return; delete t.completedAt; tasks.push(t); completed=completed.filter(x=>x.id!==id); save(); render(); }
+window.compToBin = function(id){ const t=completed.find(x=>x.id===id); if(!t)return; t.deletedAt=Date.now(); deleted.unshift(t); completed=completed.filter(x=>x.id!==id); save(); render(); }
+window.restoreDel = function(id){ const t=deleted.find(x=>x.id===id); if(!t)return; delete t.deletedAt; tasks.push(t); deleted=deleted.filter(x=>x.id!==id); save(); render(); }
+window.permDel = function(id){ deleted=deleted.filter(x=>x.id!==id); save(); render(); }
+window.addTime = function(s){ secsLeft+=s; totalSecs+=s; updRing(); save(); if(!paused) { clearInterval(ticker); tick(); } }
 
-window.addTime = function(s){
-  secsLeft+=s;totalSecs+=s;
-  const t=tasks.find(x=>x.id===activeId);if(t){t.mins=Math.floor(totalSecs/60);t.secs=totalSecs%60;}
-  document.getElementById('ring').style.stroke='url(#timerGradient)';
-  updRing();
-  save(); // Cloud Sync the Added Time
-  toast(`+${fmt(s)} added!`);
-  
-  if(!paused) {
-     clearInterval(ticker);
-     tick();
-  }
-}
-
-// ===== TASK MODAL & PRESETS =====
+// ===== TASK MODAL =====
 document.getElementById('fab').onclick=openAddTask;
-function openAddTask(){editId=null;selPrio='medium';document.getElementById('tname').value='';document.getElementById('tdesc').value='';document.getElementById('tmins').value='';document.getElementById('tsecs').value='';document.getElementById('taskMT').textContent='New Task';updPrioUI();document.getElementById('taskM').classList.add('open');setTimeout(()=>document.getElementById('tname').focus(),350);}
-window.openEditTask = function(id){const t=tasks.find(x=>x.id===id);if(!t)return;editId=id;selPrio=t.priority;document.getElementById('tname').value=t.name;document.getElementById('tdesc').value=t.desc||'';document.getElementById('tmins').value=t.mins;document.getElementById('tsecs').value=t.secs;document.getElementById('taskMT').textContent='Edit Task';updPrioUI();document.getElementById('taskM').classList.add('open');}
+function openAddTask(){ editId=null; selPrio='medium'; document.getElementById('tname').value=''; document.getElementById('tdesc').value=''; document.getElementById('tmins').value=''; document.getElementById('tsecs').value=''; document.getElementById('taskMT').textContent='New Task'; updPrioUI(); document.getElementById('taskM').classList.add('open'); setTimeout(()=>document.getElementById('tname').focus(),350); }
+window.openEditTask = function(id){ const t=tasks.find(x=>x.id===id); if(!t)return; editId=id; selPrio=t.priority; document.getElementById('tname').value=t.name; document.getElementById('tdesc').value=t.desc||''; document.getElementById('tmins').value=t.mins; document.getElementById('tsecs').value=t.secs; document.getElementById('taskMT').textContent='Edit Task'; updPrioUI(); document.getElementById('taskM').classList.add('open'); }
 window.closeTaskM = function(){document.getElementById('taskM').classList.remove('open');}
-
-window.setPresetTask = function(m) {
-  document.getElementById('tmins').value = m;
-  document.getElementById('tsecs').value = 0;
-}
-
+window.setPresetTask = function(m) { document.getElementById('tmins').value = m; document.getElementById('tsecs').value = 0; }
 window.saveTask = function(){
-  const name=document.getElementById('tname').value.trim();
-  const desc=document.getElementById('tdesc').value.trim();
-  const mins=parseInt(document.getElementById('tmins').value)||0;
-  const secs=Math.min(parseInt(document.getElementById('tsecs').value)||0,59);
-  if(!name){toast('Enter a task name.');return;}if(!mins&&!secs){toast('Set a duration.');return;}
-  if(editId){const t=tasks.find(x=>x.id===editId);if(t){t.name=name;t.desc=desc;t.mins=mins;t.secs=secs;t.priority=selPrio;}if(activeId===editId){totalSecs=mins*60+secs;showAT(t);}}
+  const name=document.getElementById('tname').value.trim(), desc=document.getElementById('tdesc').value.trim(), mins=parseInt(document.getElementById('tmins').value)||0, secs=Math.min(parseInt(document.getElementById('tsecs').value)||0,59);
+  if(!name||(!mins&&!secs)){toast('Invalid input.');return;}
+  if(editId){ const t=tasks.find(x=>x.id===editId); if(t){ t.name=name; t.desc=desc; t.mins=mins; t.secs=secs; t.priority=selPrio; } if(activeId===editId){totalSecs=mins*60+secs; showAT(t);}}
   else tasks.push({id:uid(),name,desc,mins,secs,priority:selPrio,createdAt:Date.now()});
-  save();render();window.closeTaskM();toast(editId?'Task updated.':'Task added!');
+  save(); render(); window.closeTaskM();
 }
 document.querySelectorAll('.popt').forEach(b=>{b.onclick=()=>{selPrio=b.dataset.p;updPrioUI();};});
 function updPrioUI(){document.querySelectorAll('.popt').forEach(b=>{b.className='popt';if(b.dataset.p===selPrio)b.classList.add({'critical':'sc','high':'sh','medium':'sm','low':'sl'}[selPrio]);});}
-document.getElementById('tname').addEventListener('keydown',e=>{if(e.key==='Enter')window.saveTask();});
 
 // ===== CUSTOM TIME =====
 window.openCustomTime = function(){document.getElementById('emins').value='';document.getElementById('esecs').value='';document.getElementById('custM').classList.add('open');}
 window.closeCust = function(){document.getElementById('custM').classList.remove('open');}
-window.addCustTime = function(){const m=parseInt(document.getElementById('emins').value)||0,s=parseInt(document.getElementById('esecs').value)||0;if(!m&&!s){toast('Enter a duration.');return;}window.addTime(m*60+s);window.closeCust();}
+window.addCustTime = function(){ const m=parseInt(document.getElementById('emins').value)||0, s=parseInt(document.getElementById('esecs').value)||0; if(!m&&!s)return; window.addTime(m*60+s); window.closeCust(); }
 
 // ===== TEMPLATES =====
 window.openTmplLib = function(){closeDrawer();renderTmplList();document.getElementById('tmplM').classList.add('open');}
 window.closeTmplLib = function(){document.getElementById('tmplM').classList.remove('open');}
 function renderTmplList(){
-  const el=document.getElementById('tmplList');
-  if(!templates.length){el.innerHTML='<p style="color:var(--text3);font-size:15px;text-align:center;padding:24px 0;">No templates yet.</p>';return;}
-  el.innerHTML='';
+  const el=document.getElementById('tmplList'); if(!templates.length){el.innerHTML='<p>No templates.</p>';return;} el.innerHTML='';
   templates.forEach(tm=>{
-    const d=document.createElement('div');d.className='titem';
-    d.innerHTML=`<div style="flex:1;"><div class="tiname">${esc(tm.name)}</div><div class="ticnt">${tm.tasks.length} task${tm.tasks.length!==1?'s':''}</div></div><button class="tidel" onclick="delTmpl('${tm.id}');event.stopPropagation();"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
-    d.onclick=()=>loadTmpl(tm.id);el.appendChild(d);
+    const d=document.createElement('div');d.className='titem'; d.innerHTML=`<div style="flex:1;"><div>${esc(tm.name)}</div></div><button class="tidel" onclick="delTmpl('${tm.id}');event.stopPropagation();">X</button>`; d.onclick=()=>loadTmpl(tm.id); el.appendChild(d);
   });
 }
-window.openSaveTmpl = function(){if(!tasks.length){closeDrawer();toast('No tasks to save.');return;}closeDrawer();document.getElementById('tmplN').value='';document.getElementById('saveTM').classList.add('open');}
+window.openSaveTmpl = function(){ if(!tasks.length)return; closeDrawer(); document.getElementById('tmplN').value=''; document.getElementById('saveTM').classList.add('open'); }
 window.closeSaveTmpl = function(){document.getElementById('saveTM').classList.remove('open');}
-window.doSaveTmpl = function(){const n=document.getElementById('tmplN').value.trim();if(!n){toast('Enter a name.');return;}templates.push({id:uid(),name:n,tasks:tasks.map(t=>({name:t.name,desc:t.desc||'',mins:t.mins,secs:t.secs,priority:t.priority}))});save();window.closeSaveTmpl();render();toast('Template saved!');}
-window.loadTmpl = function(id){const tm=templates.find(t=>t.id===id);if(!tm)return;tm.tasks.forEach(t=>tasks.push({id:uid(),name:t.name,desc:t.desc||'',mins:t.mins,secs:t.secs,priority:t.priority,createdAt:Date.now()}));save();window.closeTmplLib();render();toast(`Loaded "${tm.name}"!`);}
-window.delTmpl = function(id){templates=templates.filter(t=>t.id!==id);save();renderTmplList();render();toast('Template deleted.');}
+window.doSaveTmpl = function(){ const n=document.getElementById('tmplN').value.trim(); if(!n)return; templates.push({id:uid(),name:n,tasks:tasks.map(t=>({name:t.name,desc:t.desc||'',mins:t.mins,secs:t.secs,priority:t.priority}))}); save(); window.closeSaveTmpl(); render(); }
+window.loadTmpl = function(id){ const tm=templates.find(t=>t.id===id); if(!tm)return; tm.tasks.forEach(t=>tasks.push({id:uid(),name:t.name,desc:t.desc||'',mins:t.mins,secs:t.secs,priority:t.priority,createdAt:Date.now()})); save(); window.closeTmplLib(); render(); }
+window.delTmpl = function(id){ templates=templates.filter(t=>t.id!==id); save(); renderTmplList(); }
 
 // ===== DRAG REORDER (MOBILE) =====
 let tdt=null,toi=null;
@@ -1337,32 +1044,25 @@ document.addEventListener('touchmove',e=>{
   if(!tdt)return;const y=e.touches[0].clientY;
   document.querySelectorAll('.ti-wrap').forEach(el=>{
     if(el===tdt)return;const r=el.getBoundingClientRect();
-    if(y>r.top&&y<r.bottom){
-       const oi=parseInt(el.querySelector('.ti').dataset.idx);
-       if(oi!==toi){const[m]=tasks.splice(toi,1);tasks.splice(oi,0,m);toi=oi;save();render();}
-    }
+    if(y>r.top&&y<r.bottom){ const oi=parseInt(el.querySelector('.ti').dataset.idx); if(oi!==toi){const[m]=tasks.splice(toi,1);tasks.splice(oi,0,m);toi=oi;save();render();} }
   });
 },{passive:true});
 document.addEventListener('touchend',()=>{tdt=null;toi=null;});
 
 // ===== DRAG & DROP (DESKTOP) =====
 let dsi=null,doi=null;
-function onDS(e){dsi=parseInt(this.dataset.idx);this.classList.add('dragging');e.dataTransfer.effectAllowed='move';}
-function onDO(e){e.preventDefault();e.dataTransfer.dropEffect='move';document.querySelectorAll('.ti').forEach(el=>el.classList.remove('drag-over'));this.classList.add('drag-over');doi=parseInt(this.dataset.idx);}
-function onDrop(e){e.preventDefault();if(dsi===null||doi===null||dsi===doi)return;const[m]=tasks.splice(dsi,1);tasks.splice(doi,0,m);dsi=null;doi=null;save();render();}
-function onDE(){document.querySelectorAll('.ti').forEach(el=>{el.classList.remove('dragging');el.classList.remove('drag-over');});}
-
-// Close modals on scrim
-document.querySelectorAll('.mscrim').forEach(s=>{s.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});});
+function onDS(e){dsi=parseInt(this.dataset.idx);this.classList.add('dragging');}
+function onDO(e){e.preventDefault();this.classList.add('drag-over');doi=parseInt(this.dataset.idx);}
+function onDrop(e){e.preventDefault();if(dsi===null||doi===null||dsi===doi)return;const[m]=tasks.splice(dsi,1);tasks.splice(doi,0,m);save();render();}
+function onDE(){document.querySelectorAll('.ti').forEach(el=>{el.classList.remove('dragging','drag-over');});}
 
 // ===== UTILS =====
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
 function fmt(s){const m=Math.floor(s/60),sec=s%60;return`${m}:${String(sec).padStart(2,'0')}`;}
 function fmtLong(s){if(s<3600)return fmt(s);return`${Math.floor(s/3600)}h ${Math.floor((s%3600)/60)}m`;}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function tsince(ts){const d=Date.now()-ts;if(d<60000)return'just now';if(d<3600000)return Math.floor(d/60000)+'m ago';if(d<86400000)return Math.floor(d/3600000)+'h ago';return Math.floor(d/86400000)+'d ago';}
-let tT;
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2600);}
+function tsince(ts){ const d=Date.now()-ts; if(d<60000)return'just now'; if(d<3600000)return Math.floor(d/60000)+'m ago'; return Math.floor(d/3600000)+'h ago'; }
+let tT; function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2600);}
 
 render();
 </script>

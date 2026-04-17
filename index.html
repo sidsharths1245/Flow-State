@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Flow State</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="manifest" href="site.webmanifest">
+<link rel="manifest" href="site.webmanifest">
 
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -206,7 +206,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 .tbtn:active { transform: scale(.92); }
 .tbtn.start:hover { background: var(--glow); color: var(--accent); }
 
-/* FOLDER ITEMS */
+/* FOLDER ITEMS & DATE HDRS */
+.folder-date-hdr { font-size: 12px; font-weight: 700; color: var(--text3); letter-spacing: 0.6px; text-transform: uppercase; padding: 16px 4px 8px; margin-top: 4px; }
+.folder-date-hdr:first-child { margin-top: 0; padding-top: 4px; }
 .fi{background:var(--bg3);border-radius:16px;margin-bottom:10px;padding:16px 18px;display:flex;align-items:center;gap:12px;opacity:.8;}
 .fi-info{flex:1;min-width:0;}
 .fi-name{font-size:15px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -933,12 +935,39 @@ window.openFolder = function(type){
   document.getElementById('emptyBinBtn').style.display = type === 'deleted' ? 'block' : 'none'; renderFolderC(); document.getElementById('folderM').classList.add('open');
 }
 window.closeFolder = function(){document.getElementById('folderM').classList.remove('open');curFolder=null;}
+
+function getDateLabel(ts) {
+  const date = new Date(ts);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  if (date.toDateString() === today.toDateString()) return 'Today';
+  if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
+
+  const options = { month: 'short', day: 'numeric', year: 'numeric' };
+  return date.toLocaleDateString(undefined, options);
+}
+
 function renderFolderC(){
-  const el=document.getElementById('folderC'),list=curFolder==='completed'?completed:deleted;
+  const el=document.getElementById('folderC'), list=curFolder==='completed'?completed:deleted;
   if(!list.length){el.innerHTML=`<div class="empty" style="padding:32px 0;"><p>Folder is empty.</p></div>`;return;}
   el.innerHTML='';
+  
+  let currentLabel = null;
+
   list.forEach(t=>{
     const ts=curFolder==='completed'?t.completedAt:(t.deletedAt||t.completedAt||Date.now());
+    const label = getDateLabel(ts);
+
+    if (label !== currentLabel) {
+      const hdr = document.createElement('div');
+      hdr.className = 'folder-date-hdr';
+      hdr.textContent = label;
+      el.appendChild(hdr);
+      currentLabel = label;
+    }
+
     const d=document.createElement('div');d.className='fi';
     d.innerHTML=`<div class="fi-info"><div class="fi-name">${esc(t.name)}</div><div class="fi-meta">${tsince(ts)}</div></div>
     <div class="fi-btns">

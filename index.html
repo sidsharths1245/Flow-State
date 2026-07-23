@@ -271,7 +271,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 .mtitle{font-size:20px;font-weight:700;margin-bottom:24px;}
 .fg{margin-bottom:20px;}
 .flbl{font-size:12px;font-weight:700;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;display:block;}
-.finput{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;outline:none;transition:border-color .2s; resize:none;}
+.finput{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;outline:none;transition:border-color .2s; resize:vertical;}
 .finput:focus{border-color:var(--accent);}
 .trow{display:flex;gap:10px;align-items:center;}
 .trow .finput{text-align:center;}
@@ -612,7 +612,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
   <div class="modal">
     <div class="mtitle" id="taskMT">New Task</div>
     <div class="fg"><label class="flbl">Task Name</label><input class="finput" type="text" id="tname" placeholder="What needs to be done?" maxlength="80"></div>
-    <div class="fg"><label class="flbl">Description (Optional)</label><textarea class="finput" id="tdesc" rows="2" placeholder="Add extra details or subtext..." maxlength="1000"></textarea></div>
+    <div class="fg"><label class="flbl">Description (Optional)</label><textarea class="finput" id="tdesc" rows="4" placeholder="Add extra details or subtext..." maxlength="500"></textarea></div>
     <div class="fg">
       <label class="flbl">Duration</label>
       <div style="display:flex; gap:8px; margin-bottom:12px; overflow-x:auto; padding-bottom:4px;">

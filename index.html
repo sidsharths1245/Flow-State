@@ -318,7 +318,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 .thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 4px rgba(0,0,0,.2);}
 .track.on .thumb{transform:translateX(22px);}
 
-.setting-input { width: 72px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg3); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; text-align: center; outline: none; transition: border-color .2s; }
+.grace-wrap { padding: 10px 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.grace-top { display: flex; align-items: center; gap: 14px; }
+.grace-pills { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.gpill { padding: 8px 4px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg3); color: var(--text2); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; transition: all .18s; }
+.gpill:hover { background: var(--bg4); color: var(--text); }
+.gpill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.grace-cust-row { display: none; align-items: center; gap: 8px; padding-top: 2px; }
+.grace-cust-row.open { display: flex; }
+.setting-input { flex: 1; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg3); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; text-align: center; outline: none; transition: border-color .2s; }
 .setting-input:focus { border-color: var(--accent); }
 
 .auth-box { padding: 0 12px 14px; }
@@ -597,13 +605,25 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 
     <div class="ddivider"></div>
     <div class="dseclbl">Timer Settings</div>
-    <div class="toggle-row">
-      <div class="dicon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:14px;font-weight:500;">Overdue Grace (s)</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px;">Buffer after 0:00 before overdue</div>
+    <div class="grace-wrap">
+      <div class="grace-top">
+        <div class="dicon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:14px;font-weight:500;">Overdue Grace Time</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px;">Buffer after 0:00 before overdue</div>
+        </div>
+        <span class="dbadge" id="graceCurLbl">20s</span>
       </div>
-      <input type="number" id="graceInput" class="setting-input" min="0" max="3600" value="20" onchange="updateGraceSetting(this.value)">
+      <div class="grace-pills">
+        <button type="button" class="gpill" data-gval="5" onclick="selectGracePreset(5)">5s</button>
+        <button type="button" class="gpill" data-gval="10" onclick="selectGracePreset(10)">10s</button>
+        <button type="button" class="gpill" data-gval="15" onclick="selectGracePreset(15)">15s</button>
+        <button type="button" class="gpill" data-gval="custom" onclick="selectGracePreset('custom')">Custom</button>
+      </div>
+      <div class="grace-cust-row" id="graceCustRow">
+        <input type="number" id="graceInput" class="setting-input" min="0" max="3600" placeholder="Seconds" onchange="updateGraceSetting(this.value)">
+        <span style="font-size:12px;font-weight:600;color:var(--text3);">sec</span>
+      </div>
     </div>
     
     <div class="ddivider"></div>
@@ -789,7 +809,7 @@ onAuthStateChanged(auth, (user) => {
         if (typeof data.overdueGraceSecs === 'number') {
           overdueGraceSecs = data.overdueGraceSecs;
           localStorage.setItem('ff_grace', String(overdueGraceSecs));
-          document.getElementById('graceInput').value = overdueGraceSecs;
+          syncGraceUI();
         }
         const ast = data.activeState;
         if (ast) {
@@ -870,7 +890,6 @@ function playOverdueMinutePings(mins){
   const count = Math.max(1, mins);
   for(let i = 0; i < count; i++){
     const delay = i * 0.34;
-    // Upper sharp warning strike (D#5) -> drops into a flat, heavy low tone (A4 + A3 undertone)
     p(622.25, 0.09, 'square', 0.95, delay, 0.42);
     p(311.13, 0.09, 'sawtooth', 0.75, delay, 0.42);
     p(440, 0.17, 'sawtooth', 1.0, delay + 0.09, 0.45);
@@ -893,9 +912,8 @@ let tasks=JSON.parse(localStorage.getItem('ff_t')||'[]');
 let completed=JSON.parse(localStorage.getItem('ff_c')||'[]');
 let deleted=JSON.parse(localStorage.getItem('ff_d')||'[]');
 let templates=JSON.parse(localStorage.getItem('ff_tmpl')||'[]');
-let overdueGraceSecs = parseInt(localStorage.getItem('ff_grace') ?? '20', 10);
-if (isNaN(overdueGraceSecs) || overdueGraceSecs < 0) overdueGraceSecs = 20;
-document.getElementById('graceInput').value = overdueGraceSecs;
+let overdueGraceSecs = parseInt(localStorage.getItem('ff_grace') ?? '15', 10);
+if (isNaN(overdueGraceSecs) || overdueGraceSecs < 0) overdueGraceSecs = 15;
 
 let activeId=null,ticker=null,secsLeft=0,totalSecs=0,origSecs=0,paused=true,isMinimized=false;
 let sortMode=null,sortDir='asc',editId=null,selPrio='medium',curFolder=null;
@@ -910,16 +928,52 @@ let collapsedFolderGroups = JSON.parse(localStorage.getItem('ff_collapsed_folder
 let selectedIds = new Set();
 let selectionContext = 'queue';
 
+const GRACE_PRESETS = [5, 10, 15];
+
+function syncGraceUI(forceCustomOpen = false) {
+  const isPreset = GRACE_PRESETS.includes(overdueGraceSecs) && !forceCustomOpen;
+  document.querySelectorAll('.gpill').forEach(btn => {
+    const gv = btn.dataset.gval;
+    if (gv === 'custom') {
+      btn.classList.toggle('active', !isPreset);
+    } else {
+      btn.classList.toggle('active', isPreset && parseInt(gv, 10) === overdueGraceSecs);
+    }
+  });
+  const custRow = document.getElementById('graceCustRow');
+  if (custRow) custRow.classList.toggle('open', !isPreset);
+  const inp = document.getElementById('graceInput');
+  if (inp) inp.value = overdueGraceSecs;
+  const lbl = document.getElementById('graceCurLbl');
+  if (lbl) lbl.textContent = `${overdueGraceSecs}s`;
+}
+
+window.selectGracePreset = function(preset) {
+  if (preset === 'custom') {
+    syncGraceUI(true);
+    setTimeout(() => document.getElementById('graceInput').focus(), 50);
+    return;
+  }
+  overdueGraceSecs = parseInt(preset, 10);
+  localStorage.setItem('ff_grace', String(overdueGraceSecs));
+  syncGraceUI(false);
+  save();
+  updRing();
+  toast(`Overdue grace set to ${overdueGraceSecs}s.`);
+};
+
 window.updateGraceSetting = function(val) {
   let n = parseInt(val, 10);
   if (isNaN(n) || n < 0) n = 0;
   overdueGraceSecs = n;
-  document.getElementById('graceInput').value = n;
   localStorage.setItem('ff_grace', String(n));
+  syncGraceUI(!GRACE_PRESETS.includes(n));
   save();
   updRing();
-  toast(`Overdue threshold set to ${n}s.`);
+  toast(`Overdue grace set to ${n}s.`);
 };
+
+syncGraceUI();
 
 let confirmCb = null;
 window.openConfirm = function(t, m, cb) {
@@ -1636,12 +1690,10 @@ function tick(){
       }
     } else {
       const over = Math.abs(secsLeft);
-      // Trigger the distinct overdue-start tone when the grace threshold is crossed
       if (overdueGraceSecs > 0 && over === overdueGraceSecs) {
         playOverdueStartSound();
         toast("Task is now marked overdue!");
       }
-      // Every full minute of overtime (1m, 2m, 3m...), play N loud negative pings
       if (over % 60 === 0) {
         const minsOver = Math.floor(over / 60);
         const pingDelay = (overdueGraceSecs > 0 && over === overdueGraceSecs) ? 800 : 0;
@@ -1695,7 +1747,6 @@ function updRing(){
 
     ringEl.style.stroke = 'var(--red)';
 
-    // Animate a continuous 60-second sweeping loop around the ring for each overdue minute
     const cycleSec = over % 60;
     if (cycleSec === 1) {
       ringEl.style.transition = 'none';

@@ -95,6 +95,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 .fpill:hover { background: var(--bg3); color: var(--text); }
 .fpill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
+.folder-filters { display: none; gap: 8px; margin-bottom: 14px; flex-shrink: 0; }
+.ffpill { padding: 7px 14px; border-radius: 16px; border: 1px solid var(--border); background: var(--bg3); color: var(--text2); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; }
+.ffpill:hover { background: var(--bg4); color: var(--text); }
+.ffpill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.ffpill.overdue-pill.active { background: var(--red); border-color: var(--red); color: #fff; }
+
 .sort-wrap{position:relative;}
 .sort-ibtn.on{color:var(--accent);}
 .sdrop{position:absolute;top:calc(100% + 8px);right:0;background:var(--bg2);border:1px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:var(--shadow2);z-index:350;min-width:220px;display:none;padding:8px;}
@@ -128,9 +134,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 
 .ring-wrap{position:relative;width:240px;height:240px;margin-bottom:60px;}
 .rsvg{width:240px;height:240px;transform:rotate(-90deg);}
-.rbg{fill:none;stroke:var(--bg3);stroke-width:12;}
+.rbg{fill:none;stroke:var(--bg3);stroke-width:12;transition:stroke .3s;}
+.rbg.overdue-track{stroke:rgba(239,68,68,0.18);}
 .rfg{fill:none;stroke:url(#timerGradient);stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s;}
-.rtime{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:52px;font-weight:700;letter-spacing:-1px;font-variant-numeric:tabular-nums;color:var(--text);}
+.rtime{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:52px;font-weight:700;letter-spacing:-1px;font-variant-numeric:tabular-nums;color:var(--text);transition:color .2s;}
+.rtime.overdue{color:var(--red);}
+.over-sub{position:absolute;top:68%;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--red);background:var(--rbg);padding:3px 9px;border-radius:8px;display:none;white-space:nowrap;}
+.over-sub.show{display:block;}
 
 .at-primary-ctrls{display:flex;gap:36px;justify-content:center;align-items:flex-start;width:100%;margin-bottom:32px;}
 .ctrl-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;}
@@ -150,12 +160,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 .p-pill.medium { background: var(--gbg); color: var(--green); }
 .p-pill.low { background: var(--bbg); color: var(--blue); }
 
-.mini-timer { background: var(--bg2); border: none; border-radius: 20px; padding: 18px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all .2s; box-shadow: var(--shadow2); }
+.mini-timer { background: var(--bg2); border: 1px solid transparent; border-radius: 20px; padding: 18px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all .2s; box-shadow: var(--shadow2); }
 .mini-timer:hover { background: var(--bg3); }
+.mini-timer.overdue { border-color: var(--red); background: var(--rbg); }
 .mt-info { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
 .mt-name { font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
 .mt-right { display: flex; align-items: center; gap: 16px; }
 .mt-time { font-size: 15px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+.mt-time.overdue { color: var(--red); font-weight: 700; }
 .mt-play { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg3); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all .2s; }
 .mt-play:hover { background: var(--bg4); }
 .mt-play:active { transform: scale(.9); }
@@ -223,11 +235,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 
 .folder-date-hdr { font-size: 12px; font-weight: 700; color: var(--text3); letter-spacing: 0.6px; text-transform: uppercase; padding: 16px 4px 8px; margin-top: 4px; }
 .folder-date-hdr:first-child { margin-top: 0; padding-top: 4px; }
-.fi{background:var(--bg3);border-radius:16px;margin-bottom:10px;padding:16px 18px;display:flex;align-items:center;gap:12px;opacity:.85;transition:all .18s;cursor:pointer;}
+.fi{background:var(--bg3);border-radius:16px;margin-bottom:10px;padding:16px 18px;display:flex;align-items:center;gap:12px;opacity:.92;transition:all .18s;cursor:pointer;}
 .fi.selected { box-shadow: inset 0 0 0 2px var(--accent); background: var(--glow); opacity: 1; }
 .fi-info{flex:1;min-width:0;}
 .fi-name{font-size:15px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.fi-meta{font-size:13px;color:var(--text3);margin-top:4px;}
+.fi-meta{font-size:12px;color:var(--text3);margin-top:4px;line-height:1.4;}
+.fi-dur{font-size:12px;color:var(--text2);margin-top:4px;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.fi-dur .overdue-diff{color:var(--red);font-weight:700;}
+.overdue-badge{background:var(--rbg);color:var(--red);font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;margin-right:6px;vertical-align:middle;border:1px solid rgba(239,68,68,0.3);letter-spacing:.3px;}
 .fi-btns{display:flex;gap:6px;flex-shrink:0;}
 .rbtn{width:36px;height:36px;border-radius:50%;border:none;background:var(--bg4);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .rbtn:hover{color:var(--text);background:var(--bg4);}
@@ -238,13 +253,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 .empty svg{margin-bottom:18px;opacity:.35;}
 .empty p{font-size:15px;line-height:1.6;}
 
-/* ===== EDIT 1: FAB (long-press friendly) ===== */
 .fab{position:absolute;bottom:32px;right:22px;width:60px;height:60px;border-radius:50%;background:var(--accent);border:none;color:#fff;box-shadow:0 8px 24px var(--glow);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s, box-shadow .2s;z-index:200;touch-action:manipulation;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;}
 .fab:active{transform:scale(.92);}
 .fab.pressing{transform:scale(.9);box-shadow:0 0 0 8px var(--glow), 0 8px 24px var(--glow);}
 .fab.hidden { display: none; }
 
-/* SELECTION ACTION BAR — z-index must sit above .mscrim (10000) so it's visible in the Bin */
 .selbar {
   position: fixed;
   bottom: 24px;
@@ -291,7 +304,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 .dtitle{font-size:18px;font-weight:700;}
 .dclose{width:40px;height:40px;border-radius:50%;border:none;background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .dclose:hover{background:var(--bg3);color:var(--text);}
-.dbody{flex:1;overflow-y:auto;padding:12px 12px 0;}
+.dbody{flex:1;overflow-y:auto;padding:12px 12px 24px;}
 .dseclbl{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.7px;text-transform:uppercase;padding:14px 12px 8px;}
 .ditem{display:flex;align-items:center;gap:14px;padding:14px 12px;border-radius:14px;cursor:pointer;transition:background .18s;border:none;background:transparent;color:var(--text);font-size:15px;font-weight:500;width:100%;text-align:left;}
 .ditem:hover{background:var(--bg3);}
@@ -304,6 +317,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 .track.on{background:var(--accent);border-color:var(--accent);}
 .thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 4px rgba(0,0,0,.2);}
 .track.on .thumb{transform:translateX(22px);}
+
+.setting-input { width: 72px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg3); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; text-align: center; outline: none; transition: border-color .2s; }
+.setting-input:focus { border-color: var(--accent); }
 
 .auth-box { padding: 0 12px 14px; }
 .auth-input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg3); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; margin-bottom: 8px; outline: none; transition: border-color 0.2s; }
@@ -403,8 +419,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
   <div class="filters">
     <button class="fpill active" data-f="all">All</button>
     <button class="fpill" data-f="high">High Priority</button>
-    <button class="fpill" data-f="quick">Quick (< 15m)</button>
-    <button class="fpill" data-f="long">Deep Work (> 30m)</button>
+    <button class="fpill" data-f="quick">Quick (&lt; 15m)</button>
+    <button class="fpill" data-f="long">Deep Work (&gt; 30m)</button>
     <button class="fpill" data-f="med">Medium</button>
     <button class="fpill" data-f="low">Low</button>
   </div>
@@ -458,10 +474,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
               <stop offset="100%" stop-color="var(--accent)" />
             </linearGradient>
           </defs>
-          <circle class="rbg" cx="100" cy="100" r="90"/>
+          <circle class="rbg" id="ringBg" cx="100" cy="100" r="90"/>
           <circle class="rfg" id="ring" cx="100" cy="100" r="90" stroke-dasharray="565.5" stroke-dashoffset="0"/>
         </svg>
         <div class="rtime" id="rtime">0:00</div>
+        <div class="over-sub" id="overSub">Overdue</div>
       </div>
 
       <div class="at-primary-ctrls">
@@ -496,7 +513,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
     </div>
   </div>
 
-  <!-- EDIT 2: FAB — inline onclick removed; handled by JS with tap vs long-press -->
   <button class="fab" id="fab">
     <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
   </button>
@@ -578,6 +594,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
       <span class="dlbl">Template Library</span>
       <span class="dbadge" id="dbTmpl">0</span>
     </button>
+
+    <div class="ddivider"></div>
+    <div class="dseclbl">Timer Settings</div>
+    <div class="toggle-row">
+      <div class="dicon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:14px;font-weight:500;">Overdue Grace (s)</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px;">Buffer after 0:00 before overdue</div>
+      </div>
+      <input type="number" id="graceInput" class="setting-input" min="0" max="3600" value="20" onchange="updateGraceSetting(this.value)">
+    </div>
     
     <div class="ddivider"></div>
     <div class="dseclbl">Appearance</div>
@@ -592,7 +619,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 
 <div class="mscrim" id="folderM">
   <div class="modal" style="display:flex; flex-direction:column; height:100%;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-shrink:0;gap:8px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-shrink:0;gap:8px;">
       <div class="mtitle" id="folderT" style="margin-bottom:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
       <div style="display:flex; align-items:center; gap:8px;">
         <button id="emptyBinBtn" onclick="emptyBin()" style="display:none; background:var(--rbg); color:var(--red); border:none; padding:8px 14px; border-radius:10px; font-family:'Inter',sans-serif; font-weight:600; font-size:13px; cursor:pointer; transition:all .2s;">Empty Bin</button>
@@ -603,6 +630,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
           <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
+    </div>
+    <div class="folder-filters" id="compFilters">
+      <button class="ffpill active" id="ffAll" onclick="setCompFilter('all')">All Tasks</button>
+      <button class="ffpill overdue-pill" id="ffOverdue" onclick="setCompFilter('overdue')">Overdue Only</button>
     </div>
     <div id="folderC" style="overflow-y:auto; flex:1; min-height:0;"></div>
   </div>
@@ -709,7 +740,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
   </div>
 </div>
 
-<!-- EDIT 3: New modal — template picker for the FAB long-press -->
 <div class="mscrim" id="fabTmplM">
   <div class="modal" style="display:flex; flex-direction:column; max-height:70vh;">
     <div class="mtitle" style="margin-bottom:6px;">Insert Template</div>
@@ -756,6 +786,11 @@ onAuthStateChanged(auth, (user) => {
         completed = data.completed || [];
         deleted = data.deleted || [];
         templates = data.templates || [];
+        if (typeof data.overdueGraceSecs === 'number') {
+          overdueGraceSecs = data.overdueGraceSecs;
+          localStorage.setItem('ff_grace', String(overdueGraceSecs));
+          document.getElementById('graceInput').value = overdueGraceSecs;
+        }
         const ast = data.activeState;
         if (ast) {
            if (ast.id !== activeId || ast.paused !== paused || Math.abs(ast.secsLeft - secsLeft) > 5 || ast.isMinimized !== isMinimized) {
@@ -805,8 +840,8 @@ window.logOutUser = async function() { await signOut(auth); toast("Working offli
 let sndOn = localStorage.getItem('ff_snd') !== '0';
 function ac(){if(!window.sndCtx)window.sndCtx=new(window.AudioContext||window.webkitAudioContext)();if(window.sndCtx.state==='suspended')window.sndCtx.resume();return window.sndCtx;}
 
-function p(f,d,t='sine',v=1,dl=0){
-  const c=ac(),m=c.createGain();m.gain.value=0.2;m.connect(c.destination);
+function p(f,d,t='sine',v=1,dl=0,masterGain=0.2){
+  const c=ac(),m=c.createGain();m.gain.value=masterGain;m.connect(c.destination);
   const o=c.createOscillator(),g=c.createGain();
   o.type=t;o.frequency.value=f;
   g.gain.setValueAtTime(0,c.currentTime+dl);
@@ -820,6 +855,27 @@ function playAlarm(){
   if(alarmType === 'default') { for(let i=0;i<3;i++){p(880,.12,'square',.5,i*.22);p(440,.1,'square',.3,i*.22+.12);} }
   else if (alarmType === 'chime') { p(1047, .2); p(1318, .6, 'sine', 1, .25); }
   else if (alarmType === 'buzzer') { for(let i=0;i<4;i++){p(300,.2,'sawtooth',.6,i*.3);} }
+}
+function playOverdueStartSound(){
+  if(!sndOn) return;
+  // Louder, heavy 3-step descending penalty alert when overdue status officially begins
+  p(740, 0.14, 'sawtooth', 0.9, 0, 0.38);
+  p(554.37, 0.14, 'sawtooth', 0.9, 0.16, 0.38);
+  p(370, 0.42, 'sawtooth', 1.0, 0.32, 0.42);
+  p(185, 0.42, 'square', 0.7, 0.32, 0.38);
+}
+function playOverdueMinutePings(mins){
+  if(!sndOn) return;
+  // Plays N loud, distinct "negative" two-tone descending buzz-pings (tritone drop) for N overdue minutes
+  const count = Math.max(1, mins);
+  for(let i = 0; i < count; i++){
+    const delay = i * 0.34;
+    // Upper sharp warning strike (D#5) -> drops into a flat, heavy low tone (A4 + A3 undertone)
+    p(622.25, 0.09, 'square', 0.95, delay, 0.42);
+    p(311.13, 0.09, 'sawtooth', 0.75, delay, 0.42);
+    p(440, 0.17, 'sawtooth', 1.0, delay + 0.09, 0.45);
+    p(220, 0.17, 'square', 0.85, delay + 0.09, 0.42);
+  }
 }
 function playHalfwaySound(){
   if(!sndOn) return;
@@ -837,9 +893,14 @@ let tasks=JSON.parse(localStorage.getItem('ff_t')||'[]');
 let completed=JSON.parse(localStorage.getItem('ff_c')||'[]');
 let deleted=JSON.parse(localStorage.getItem('ff_d')||'[]');
 let templates=JSON.parse(localStorage.getItem('ff_tmpl')||'[]');
+let overdueGraceSecs = parseInt(localStorage.getItem('ff_grace') ?? '20', 10);
+if (isNaN(overdueGraceSecs) || overdueGraceSecs < 0) overdueGraceSecs = 20;
+document.getElementById('graceInput').value = overdueGraceSecs;
+
 let activeId=null,ticker=null,secsLeft=0,totalSecs=0,origSecs=0,paused=true,isMinimized=false;
 let sortMode=null,sortDir='asc',editId=null,selPrio='medium',curFolder=null;
 let activeFilter='all';
+let compFilter='all';
 let groupByTemplate = localStorage.getItem('ff_grp') === '1';
 let collapsedGroups = JSON.parse(localStorage.getItem('ff_collapsed_groups') || '{}');
 
@@ -848,6 +909,17 @@ let collapsedFolderGroups = JSON.parse(localStorage.getItem('ff_collapsed_folder
 
 let selectedIds = new Set();
 let selectionContext = 'queue';
+
+window.updateGraceSetting = function(val) {
+  let n = parseInt(val, 10);
+  if (isNaN(n) || n < 0) n = 0;
+  overdueGraceSecs = n;
+  document.getElementById('graceInput').value = n;
+  localStorage.setItem('ff_grace', String(n));
+  save();
+  updRing();
+  toast(`Overdue threshold set to ${n}s.`);
+};
 
 let confirmCb = null;
 window.openConfirm = function(t, m, cb) {
@@ -877,6 +949,7 @@ function saveLocalOnly() {
   localStorage.setItem('ff_c',JSON.stringify(completed));
   localStorage.setItem('ff_d',JSON.stringify(deleted));
   localStorage.setItem('ff_tmpl',JSON.stringify(templates));
+  localStorage.setItem('ff_grace', String(overdueGraceSecs));
   localStorage.setItem('ff_active', JSON.stringify({id: activeId, secsLeft, totalSecs, origSecs, paused, isMinimized}));
 }
 
@@ -884,7 +957,7 @@ async function save(){
   saveLocalOnly();
   if (currentUser) {
     try { await setDoc(doc(db, "users", currentUser.uid), {
-      tasks, completed, deleted, templates,
+      tasks, completed, deleted, templates, overdueGraceSecs,
       activeState: {id: activeId, secsLeft, totalSecs, origSecs, paused, isMinimized}, lastUpdated: Date.now()
     }, { merge: true }); } catch (e) {}
   }
@@ -976,6 +1049,14 @@ window.toggleSelect = function(id){
   refreshGroupSelectButtons();
 };
 
+function getFilteredFolderList(){
+  let list = curFolder === 'completed' ? completed : deleted;
+  if(curFolder === 'completed' && compFilter === 'overdue'){
+    list = list.filter(t => t.wasOverdue);
+  }
+  return list;
+}
+
 function refreshGroupSelectButtons(){
   document.querySelectorAll('.ghdr').forEach(gh=>{
     const btn = gh.querySelector('.gsel');
@@ -987,10 +1068,10 @@ function refreshGroupSelectButtons(){
       if(gkey === '__none__') ids = tasks.filter(t => !t.tmplId).map(t=>t.id);
       else ids = tasks.filter(t => t.tmplId === gkey).map(t=>t.id);
     } else {
-      const list = curFolder === 'completed' ? completed : deleted;
+      const list = getFilteredFolderList();
       if(gkey === '__tmpls__') ids = list.filter(t => t.type === 'template').map(t=>t.id);
       else if(gkey === '__none__') ids = list.filter(t => t.type !== 'template' && !t.tmplName).map(t=>t.id);
-      else ids = list.filter(t => t.type !== 'template' && (t.tmplId === gkey || t.tmplName === gkey)).map(t=>t.id);
+      else ids = list.filter(t => t.type !== 'template' && (t.tmplId === gkey || ('name:' + t.tmplName) === gkey || t.tmplName === gkey)).map(t=>t.id);
     }
     const allSelected = ids.length > 0 && ids.every(id => selectedIds.has(id));
     btn.classList.toggle('on', allSelected);
@@ -1037,10 +1118,10 @@ window.toggleGroupSelect = function(key, context){
     if(key === '__none__') ids = tasks.filter(t => !t.tmplId).map(t=>t.id);
     else ids = tasks.filter(t => t.tmplId === key).map(t=>t.id);
   } else {
-    const list = curFolder === 'completed' ? completed : deleted;
+    const list = getFilteredFolderList();
     if(key === '__tmpls__') ids = list.filter(t => t.type === 'template').map(t=>t.id);
     else if(key === '__none__') ids = list.filter(t => t.type !== 'template' && !t.tmplName).map(t=>t.id);
-    else ids = list.filter(t => t.type !== 'template' && (t.tmplId === key || t.tmplName === key)).map(t=>t.id);
+    else ids = list.filter(t => t.type !== 'template' && (t.tmplId === key || ('name:' + t.tmplName) === key || t.tmplName === key)).map(t=>t.id);
   }
   
   if(!ids.length) return;
@@ -1090,6 +1171,9 @@ window.doSelectionAction = function(action){
         } else {
           delete t.completedAt;
           delete t.deletedAt;
+          delete t.wasOverdue;
+          delete t.actualSecs;
+          delete t.plannedSecs;
           tasks.push(t);
         }
       });
@@ -1138,6 +1222,14 @@ window.toggleFolderGroup = function(key){
   renderFolderC();
 };
 
+window.setCompFilter = function(f){
+  compFilter = f;
+  document.getElementById('ffAll').classList.toggle('active', f === 'all');
+  document.getElementById('ffOverdue').classList.toggle('active', f === 'overdue');
+  clearSelection();
+  renderFolderC();
+};
+
 // ===== SWIPE =====
 let swEl = null, swStartX = 0, swStartY = 0, isSw = null;
 function onSwipeStart(e){
@@ -1178,7 +1270,7 @@ function render(){
   else if (activeFilter === 'med') { q = q.filter(t => t.priority === 'medium'); }
   else if (activeFilter === 'low') { q = q.filter(t => t.priority === 'low'); }
   
-  const tot=q.reduce((s,t)=>s+t.mins*60+t.secs,0)+(activeId?secsLeft:0);
+  const tot=q.reduce((s,t)=>s+t.mins*60+t.secs,0)+(activeId?Math.max(0,secsLeft):0);
   document.getElementById('qTime').textContent=fmtLong(tot);
   const cnt=tasks.length;
   document.getElementById('qCnt').textContent=cnt+' task'+(cnt!==1?'s':'');
@@ -1318,6 +1410,12 @@ window.openFolder = function(type){
   curFolder=type; closeDrawer();
   document.getElementById('folderT').textContent = type==='completed' ? 'Completed' : 'Bin';
   document.getElementById('emptyBinBtn').style.display = type === 'deleted' ? 'block' : 'none';
+  document.getElementById('compFilters').style.display = type === 'completed' ? 'flex' : 'none';
+  if(type === 'completed') {
+    compFilter = 'all';
+    document.getElementById('ffAll').classList.add('active');
+    document.getElementById('ffOverdue').classList.remove('active');
+  }
   selectionContext = 'folder';
   clearSelection();
   updateFolderGroupBtn();
@@ -1345,9 +1443,12 @@ function getDateLabel(ts) {
 
 function renderFolderC(){
   const el=document.getElementById('folderC');
-  const list = curFolder==='completed' ? completed : deleted;
+  const list = getFilteredFolderList();
   if(!list.length){
-    el.innerHTML = `<div class="empty" style="padding:32px 0;"><p>Folder is empty.</p></div>`;
+    const msg = (curFolder === 'completed' && compFilter === 'overdue')
+      ? 'No overdue tasks found.'
+      : 'Folder is empty.';
+    el.innerHTML = `<div class="empty" style="padding:32px 0;"><p>${msg}</p></div>`;
     return;
   }
   el.innerHTML = '';
@@ -1435,8 +1536,19 @@ function renderFolderC(){
 
 function buildFolderItem(t, ts){
   const isTmpl = t.type === 'template';
-  const badgeHtml = isTmpl ? `<span style="background:var(--bg4);color:var(--accent);font-size:10px;font-weight:700;padding:3px 6px;border-radius:6px;margin-right:8px;vertical-align:middle;border:1px solid var(--border);">TEMPLATE</span>` : '';
-  const nameHtml = badgeHtml + esc(t.name);
+  const tmplBadgeHtml = isTmpl ? `<span style="background:var(--bg4);color:var(--accent);font-size:10px;font-weight:700;padding:3px 6px;border-radius:6px;margin-right:8px;vertical-align:middle;border:1px solid var(--border);">TEMPLATE</span>` : '';
+  const overdueBadgeHtml = (!isTmpl && t.wasOverdue) ? `<span class="overdue-badge">OVERDUE</span>` : '';
+  const nameHtml = tmplBadgeHtml + overdueBadgeHtml + esc(t.name);
+
+  let durInfoHtml = '';
+  if (!isTmpl && curFolder === 'completed') {
+    const planned = typeof t.plannedSecs === 'number' ? t.plannedSecs : ((t.mins || 0) * 60 + (t.secs || 0));
+    const actual = typeof t.actualSecs === 'number' ? t.actualSecs : planned;
+    const diff = actual - planned;
+    const diffStr = diff > 0 ? `<span class="overdue-diff">(+${fmt(diff)})</span>` : '';
+    durInfoHtml = `<div class="fi-dur"><span>Planned: <strong>${fmt(planned)}</strong></span><span>•</span><span>Actual: <strong>${fmt(actual)}</strong> ${diffStr}</span></div>`;
+  }
+
   const rAction = curFolder === 'completed'
     ? `restoreComp('${t.id}')`
     : (isTmpl ? `restoreTmpl('${t.id}')` : `restoreDel('${t.id}')`);
@@ -1451,6 +1563,7 @@ function buildFolderItem(t, ts){
   d.innerHTML=`
     <div class="fi-info" onclick="handleFolderItemClick('${t.id}')">
       <div class="fi-name">${nameHtml}</div>
+      ${durInfoHtml}
       <div class="fi-meta">${tsince(ts)}</div>
     </div>
     <div class="fi-btns">
@@ -1507,41 +1620,161 @@ function tick(){
   clearInterval(ticker);
   ticker=setInterval(()=>{
     if(paused)return;
-    if(secsLeft>0){
-      secsLeft--; updRing();
+    secsLeft--;
+    updRing();
+
+    if(secsLeft > 0){
       if (totalSecs > 10 && secsLeft === Math.floor(totalSecs / 2)) { playHalfwaySound(); toast("Halfway there!"); }
-      if (secsLeft <= 5 && secsLeft > 0) { playTickSound(); }
+      if (secsLeft <= 5) { playTickSound(); }
+    } else if (secsLeft === 0) {
+      if (overdueGraceSecs === 0) {
+        playOverdueStartSound();
+        toast("Time's up! Task is now overdue.");
+      } else {
+        playAlarm();
+        toast(`Time's up! ${overdueGraceSecs}s before overdue.`);
+      }
     } else {
-      clearInterval(ticker); playAlarm(); document.getElementById('ring').style.stroke='var(--red)'; toast("Time's up!");
+      const over = Math.abs(secsLeft);
+      // Trigger the distinct overdue-start tone when the grace threshold is crossed
+      if (overdueGraceSecs > 0 && over === overdueGraceSecs) {
+        playOverdueStartSound();
+        toast("Task is now marked overdue!");
+      }
+      // Every full minute of overtime (1m, 2m, 3m...), play N loud negative pings
+      if (over % 60 === 0) {
+        const minsOver = Math.floor(over / 60);
+        const pingDelay = (overdueGraceSecs > 0 && over === overdueGraceSecs) ? 800 : 0;
+        setTimeout(() => playOverdueMinutePings(minsOver), pingDelay);
+        toast(`-${minsOver} min${minsOver > 1 ? 's' : ''} overdue!`);
+      }
     }
   },1000);
 }
 
 function updRing(){
-  const str = fmt(secsLeft); document.getElementById('rtime').textContent = str; document.getElementById('mttime').textContent = str;
-  const p=totalSecs>0?secsLeft/totalSecs:0; document.getElementById('ring').style.strokeDashoffset=565.5*(1-p);
-  if(secsLeft>0)document.getElementById('ring').style.stroke='url(#timerGradient)';
+  const rtimeEl = document.getElementById('rtime');
+  const mttimeEl = document.getElementById('mttime');
+  const ringEl = document.getElementById('ring');
+  const ringBgEl = document.getElementById('ringBg');
+  const overSubEl = document.getElementById('overSub');
+  const miniTimerEl = document.getElementById('miniTimer');
+  const C = 565.5;
+
+  if (secsLeft >= 0) {
+    const str = fmt(secsLeft);
+    rtimeEl.textContent = str;
+    mttimeEl.textContent = str;
+    rtimeEl.classList.remove('overdue');
+    mttimeEl.classList.remove('overdue');
+    miniTimerEl.classList.remove('overdue');
+    overSubEl.classList.remove('show');
+    if (ringBgEl) ringBgEl.classList.remove('overdue-track');
+
+    ringEl.style.transition = 'stroke-dashoffset 1s linear, stroke .3s';
+    const p = totalSecs > 0 ? secsLeft / totalSecs : 0;
+    ringEl.style.strokeDashoffset = C * (1 - p);
+    ringEl.style.stroke = secsLeft === 0 ? 'var(--red)' : 'url(#timerGradient)';
+  } else {
+    const over = Math.abs(secsLeft);
+    const str = '-' + fmt(over);
+    rtimeEl.textContent = str;
+    mttimeEl.textContent = str;
+    rtimeEl.classList.add('overdue');
+    mttimeEl.classList.add('overdue');
+    miniTimerEl.classList.add('overdue');
+    overSubEl.classList.add('show');
+    if (ringBgEl) ringBgEl.classList.add('overdue-track');
+
+    if (over >= overdueGraceSecs) {
+      const mOver = Math.floor(over / 60);
+      overSubEl.textContent = mOver > 0 ? `Overdue • Min ${mOver + 1}` : `Overdue (+${fmt(over)})`;
+    } else {
+      overSubEl.textContent = `Grace: ${overdueGraceSecs - over}s left`;
+    }
+
+    ringEl.style.stroke = 'var(--red)';
+
+    // Animate a continuous 60-second sweeping loop around the ring for each overdue minute
+    const cycleSec = over % 60;
+    if (cycleSec === 1) {
+      ringEl.style.transition = 'none';
+      ringEl.style.strokeDashoffset = C;
+      void ringEl.getBoundingClientRect();
+      ringEl.style.transition = 'stroke-dashoffset 1s linear, stroke .3s';
+      ringEl.style.strokeDashoffset = C * (1 - 1 / 60);
+    } else if (cycleSec === 0) {
+      ringEl.style.transition = 'stroke-dashoffset 1s linear, stroke .3s';
+      ringEl.style.strokeDashoffset = 0;
+    } else {
+      ringEl.style.transition = 'stroke-dashoffset 1s linear, stroke .3s';
+      ringEl.style.strokeDashoffset = C * (1 - cycleSec / 60);
+    }
+  }
+}
+
+function finalizeActiveTaskMetrics(t) {
+  const planned = origSecs > 0 ? origSecs : (t.mins * 60 + t.secs);
+  const elapsed = Math.max(0, totalSecs - secsLeft);
+  const overtime = secsLeft < 0 ? Math.abs(secsLeft) : 0;
+  t.plannedSecs = planned;
+  t.actualSecs = elapsed;
+  t.wasOverdue = overtime >= overdueGraceSecs && secsLeft < 0;
+  t.completedAt = Date.now();
 }
 
 function stopTimerLocalUI() { clearInterval(ticker);ticker=null;activeId=null;paused=true; isMinimized=false; document.getElementById('atOverlay').style.display='none'; document.getElementById('miniTimer').style.display='none'; }
-function stopTimer(){ if(activeId) { const t=tasks.find(x=>x.id===activeId); if(t){ t.mins=Math.floor(secsLeft/60); t.secs=secsLeft%60; } } stopTimerLocalUI(); save(); }
+function stopTimer(){ if(activeId) { const t=tasks.find(x=>x.id===activeId); if(t){ const rem = Math.max(0, secsLeft); t.mins=Math.floor(rem/60); t.secs=rem%60; } } stopTimerLocalUI(); save(); }
 window.pauseResume = function(e){ if(e) e.stopPropagation(); paused=!paused; syncPlayPauseUI(); if(paused) { clearInterval(ticker); } else { tick(); } save(); }
 window.minimizeActive = function(){ isMinimized=true; document.getElementById('atOverlay').style.display='none'; document.getElementById('miniTimer').style.display='flex'; save(); }
 window.maximizeActive = function(){ isMinimized=false; document.getElementById('atOverlay').style.display='flex'; document.getElementById('miniTimer').style.display='none'; save(); }
-window.completeActive = function(){ const t=tasks.find(x=>x.id===activeId); if(!t)return; t.completedAt=Date.now(); completed.unshift(t); tasks=tasks.filter(x=>x.id!==activeId); stopTimerLocalUI(); save(); render(); }
+window.completeActive = function(){
+  const t=tasks.find(x=>x.id===activeId); if(!t)return;
+  finalizeActiveTaskMetrics(t);
+  completed.unshift(t);
+  tasks=tasks.filter(x=>x.id!==activeId);
+  stopTimerLocalUI(); save(); render();
+}
 window.skipAndNextActive = function(){
   if(!activeId) return; const t = tasks.find(x=>x.id===activeId);
-  if(t){ t.completedAt=Date.now(); completed.unshift(t); tasks=tasks.filter(x=>x.id!==activeId); }
+  if(t){
+    finalizeActiveTaskMetrics(t);
+    completed.unshift(t);
+    tasks=tasks.filter(x=>x.id!==activeId);
+  }
   stopTimerLocalUI(); save(); const q = sorted(tasks); if(q.length > 0) { window.startTask(q[0].id, false); } else { render(); }
 }
-window.completeTask = function(id){ const t=tasks.find(x=>x.id===id); if(!t)return; t.completedAt=Date.now(); completed.unshift(t); tasks=tasks.filter(x=>x.id!==id); if(activeId===id)stopTimerLocalUI(); save(); render(); }
+window.completeTask = function(id){
+  const t=tasks.find(x=>x.id===id); if(!t)return;
+  if(activeId===id){
+    finalizeActiveTaskMetrics(t);
+    stopTimerLocalUI();
+  } else {
+    const planned = t.mins * 60 + t.secs;
+    t.plannedSecs = planned;
+    t.actualSecs = planned;
+    t.wasOverdue = false;
+    t.completedAt = Date.now();
+  }
+  completed.unshift(t);
+  tasks=tasks.filter(x=>x.id!==id);
+  save(); render();
+}
 window.resetActive = function(){ secsLeft=origSecs; totalSecs=origSecs; updRing(); save(); if(!paused) { clearInterval(ticker); tick(); } }
 window.deleteActive = function(){window.deleteTask(activeId);}
 window.deleteTask = function(id){ const t=tasks.find(x=>x.id===id); if(!t)return; t.deletedAt=Date.now(); deleted.unshift(t); tasks=tasks.filter(x=>x.id!==id); if(activeId===id)stopTimerLocalUI(); save(); render(); }
-window.restoreComp = function(id){ const t=completed.find(x=>x.id===id); if(!t)return; delete t.completedAt; tasks.push(t); completed=completed.filter(x=>x.id!==id); save(); render(); renderFolderC(); }
+window.restoreComp = function(id){
+  const t=completed.find(x=>x.id===id); if(!t)return;
+  delete t.completedAt; delete t.wasOverdue; delete t.actualSecs; delete t.plannedSecs;
+  tasks.push(t); completed=completed.filter(x=>x.id!==id); save(); render(); renderFolderC();
+}
 window.compToBin = function(id){ const t=completed.find(x=>x.id===id); if(!t)return; t.deletedAt=Date.now(); deleted.unshift(t); completed=completed.filter(x=>x.id!==id); save(); render(); renderFolderC(); }
 
-window.restoreDel = function(id){ const t=deleted.find(x=>x.id===id); if(!t)return; delete t.deletedAt; tasks.push(t); deleted=deleted.filter(x=>x.id!==id); save(); renderFolderC(); render(); }
+window.restoreDel = function(id){
+  const t=deleted.find(x=>x.id===id); if(!t)return;
+  delete t.deletedAt; delete t.completedAt; delete t.wasOverdue; delete t.actualSecs; delete t.plannedSecs;
+  tasks.push(t); deleted=deleted.filter(x=>x.id!==id); save(); renderFolderC(); render();
+}
 window.restoreTmpl = function(id) { 
   const tm = deleted.find(x => x.id === id); if(!tm) return; 
   delete tm.deletedAt; delete tm.type; templates.push(tm); 
@@ -1599,7 +1832,7 @@ window.saveTask = function(){
      return;
   }
 
-  if(editId){ const t=tasks.find(x=>x.id===editId); if(t){ t.name=name; t.desc=desc; t.mins=mins; t.secs=secs; t.priority=selPrio; } if(activeId===editId){totalSecs=mins*60+secs; showAT(t);}}
+  if(editId){ const t=tasks.find(x=>x.id===editId); if(t){ t.name=name; t.desc=desc; t.mins=mins; t.secs=secs; t.priority=selPrio; } if(activeId===editId){totalSecs=mins*60+secs; origSecs=totalSecs; showAT(t);}}
   else tasks.push({id:uid(),name,desc,mins,secs,priority:selPrio,createdAt:Date.now()});
   save(); render(); window.closeTaskM();
 }
@@ -1804,13 +2037,13 @@ function onDE(){document.querySelectorAll('.ti').forEach(el=>{el.classList.remov
 
 // ===== UTILS =====
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
-function fmt(s){const m=Math.floor(s/60),sec=s%60;return`${m}:${String(sec).padStart(2,'0')}`;}
+function fmt(s){const abs=Math.abs(s),m=Math.floor(abs/60),sec=abs%60;return`${m}:${String(sec).padStart(2,'0')}`;}
 function fmtLong(s){if(s<3600)return fmt(s);return`${Math.floor(s/3600)}h ${Math.floor((s%3600)/60)}m`;}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function tsince(ts){ const d=Date.now()-ts; if(d<60000)return'just now'; if(d<3600000)return Math.floor(d/60000)+'m ago'; return Math.floor(d/3600000)+'h ago'; }
 let tT; function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2600);}
 
-// ===== EDIT 3: FAB — TAP = NEW TASK, LONG-PRESS = TEMPLATE PICKER =====
+// ===== FAB — TAP = NEW TASK, LONG-PRESS = TEMPLATE PICKER =====
 const fabEl = document.getElementById('fab');
 let fabPressTimer = null, fabLongFired = false, fabStartPt = null;
 

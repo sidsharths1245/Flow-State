@@ -223,7 +223,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
 
 .ti-body { display: flex; flex-direction: column; gap: 6px; cursor: pointer; }
 .tname { font-size: 16px; font-weight: 600; color: var(--text); }
-.tdesc { font-size: 13px; color: var(--text2); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tdesc { font-size: 13px; color: var(--text2); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 
 .ti-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
 .ttime-wrap { display: flex; align-items: center; gap: 8px; }
@@ -729,7 +729,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);trans
   <div class="modal">
     <div class="mtitle" id="taskMT">New Task</div>
     <div class="fg"><label class="flbl">Task Name</label><input class="finput" type="text" id="tname" placeholder="What needs to be done?" maxlength="80"></div>
-    <div class="fg"><label class="flbl">Description (Optional)</label><textarea class="finput" id="tdesc" rows="4" placeholder="Add extra details or subtext..." maxlength="500"></textarea></div>
+    <div class="fg"><label class="flbl">Description (Optional)</label><textarea class="finput" id="tdesc" rows="4" placeholder="Add extra details or subtext... Type - then a space to start a bullet" maxlength="500"></textarea></div>
     <div class="fg">
       <label class="flbl">Duration</label>
       <div style="display:flex; gap:8px; margin-bottom:12px; overflow-x:auto; padding-bottom:4px;">
@@ -1434,7 +1434,7 @@ function buildTaskCard(task, dragEnabled){
         </div>
         <div class="ti-checkbox" onclick="completeTask('${task.id}'); event.stopPropagation();"></div>
       </div>
-      <div class="ti-body" onclick="handleCardClick('${task.id}')"> <div class="tname">${esc(task.name)}</div> ${task.desc ? `<div class="tdesc">${esc(task.desc)}</div>` : ''} </div>
+      <div class="ti-body" onclick="handleCardClick('${task.id}')"> <div class="tname">${esc(task.name)}</div> ${task.desc ? `<div class="tdesc">${formatDesc(task.desc)}</div>` : ''} </div>
       <div class="ti-footer">
         <div class="ttime-wrap"> <div class="dh" style="${dragEnabled ? '' : 'display:none;'}"><svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><circle cx="9" cy="5" r="1.3"/><circle cx="15" cy="5" r="1.3"/><circle cx="9" cy="12" r="1.3"/><circle cx="15" cy="12" r="1.3"/><circle cx="9" cy="19" r="1.3"/><circle cx="15" cy="19" r="1.3"/></svg></div> <span class="ttime">${fmt(task.mins*60+task.secs)}</span> </div>
         <button class="tbtn start" onclick="startTask('${task.id}', true); event.stopPropagation();"> <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start </button>
@@ -1888,6 +1888,9 @@ window.saveTask = function(){
   save(); render(); window.closeTaskM();
 }
 
+document.getElementById('tdesc').addEventListener('input', function(){ liveBulletize(this); });
+document.getElementById('tdesc').addEventListener('keydown', function(e){ handleBulletEnter(this, e); });
+
 document.querySelectorAll('.popt').forEach(b=>{b.onclick=()=>{selPrio=b.dataset.p;updPrioUI();};});
 function updPrioUI(){document.querySelectorAll('.popt').forEach(b=>{b.className='popt';if(b.dataset.p===selPrio)b.classList.add({'critical':'sc','high':'sh','medium':'sm','low':'sl'}[selPrio]);});}
 
@@ -2093,6 +2096,71 @@ function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2
 function fmt(s){const abs=Math.abs(s),m=Math.floor(abs/60),sec=abs%60;return`${m}:${String(sec).padStart(2,'0')}`;}
 function fmtLong(s){if(s<3600)return fmt(s);return`${Math.floor(s/3600)}h ${Math.floor((s%3600)/60)}m`;}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function formatDesc(raw){
+  const lines = String(raw).split('\n');
+  return lines.map(line=>{
+    const trimmed = line.replace(/^\s+/, '');
+    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+      return '• ' + esc(trimmed.slice(2));
+    }
+    if (trimmed === '-' || trimmed === '*') {
+      return '• ';
+    }
+    return esc(line);
+  }).join('<br>');
+}
+
+// Turns a "- " or "* " at the start of a line into a real "• " bullet
+// character live, as soon as the trailing space is typed, so the
+// textarea itself shows the bullet (not just the saved task card).
+function liveBulletize(ta){
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const value = ta.value;
+  const newValue = value.replace(/^([ \t]*)[-*] (?!\u2022 )/gm, '$1\u2022 ');
+  if(newValue !== value){
+    ta.value = newValue;
+    // "- "/"* " and "• " are both 2 chars, so the cursor position is unaffected
+    ta.selectionStart = start;
+    ta.selectionEnd = end;
+  }
+}
+
+// Standard bullet-list Enter behavior:
+// - Enter on a bullet line with text continues the list with a new "• " line.
+// - Enter on an empty bullet line (just "• " with nothing after it) breaks
+//   out of the list instead, dropping the bullet on that line.
+function handleBulletEnter(ta, e){
+  if(e.key !== 'Enter') return;
+  const val = ta.value;
+  const pos = ta.selectionStart;
+  const lineStart = val.lastIndexOf('\n', pos - 1) + 1;
+  let lineEnd = val.indexOf('\n', pos);
+  if(lineEnd === -1) lineEnd = val.length;
+  const currentLine = val.slice(lineStart, lineEnd);
+  const m = currentLine.match(/^([ \t]*)\u2022 (.*)$/);
+  if(!m) return; // not a bullet line, let the textarea do its normal thing
+
+  e.preventDefault();
+  const indent = m[1];
+  const textAfterBullet = m[2];
+
+  if(textAfterBullet.trim() === ''){
+    // Empty bullet: strip the bullet, stay on the same (now plain) line
+    const before = val.slice(0, lineStart);
+    const after = val.slice(lineEnd);
+    ta.value = before + indent + after;
+    const newPos = before.length + indent.length;
+    ta.selectionStart = ta.selectionEnd = newPos;
+  } else {
+    // Continue the list: split at the cursor, prefix the new line with a bullet
+    const before = val.slice(0, pos);
+    const after = val.slice(pos);
+    const insertion = '\n' + indent + '\u2022 ';
+    ta.value = before + insertion + after;
+    const newPos = pos + insertion.length;
+    ta.selectionStart = ta.selectionEnd = newPos;
+  }
+}
 function tsince(ts){ const d=Date.now()-ts; if(d<60000)return'just now'; if(d<3600000)return Math.floor(d/60000)+'m ago'; return Math.floor(d/3600000)+'h ago'; }
 let tT; function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2600);}
 
